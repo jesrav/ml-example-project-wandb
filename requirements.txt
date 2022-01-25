@@ -1,0 +1,17 @@
+pandas
+sklearn
+matplotlib
+scikit-plot
+click
+sklego
+sqlalchemy
+python-dotenv
+azure-storage-blob
+rich
+pyodbc
+pyarrow
+pandera
+seaborn
+mlflow
+evidently
+jupyter

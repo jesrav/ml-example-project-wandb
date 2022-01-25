@@ -1,0 +1,24 @@
+name: ml-example-project-wandb
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python==3.9
+  - pip:
+    - pandas
+    - sklearn
+    - matplotlib
+    - scikit-plot
+    - click
+    - sklego
+    - sqlalchemy
+    - python-dotenv
+    - azure-storage-blob
+    - rich
+    - pyodbc
+    - pyarrow
+    - pandera
+    - seaborn
+    - mlflow
+    - evidently
+    - jupyter
