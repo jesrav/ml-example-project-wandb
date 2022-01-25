@@ -19,7 +19,7 @@ def train_validate_split(
 
 
 if __name__ == '__main__':
-    run = wandb.init(project=config.TRAINING_WANDB_PROJECT, job_type="data_segregation")
+    run = wandb.init(project=config.WANDB_PROJECT, job_type="data_segregation")
 
     df = read_dataframe_artifact(run, "modelling-data:latest")
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
         run=run,
         df=train_df,
         type="train-validate-data",
-        name="train-validate-dat",
+        name="train-validate-data",
         descr="Data for training and validation.",
     )
     log_dataframe(

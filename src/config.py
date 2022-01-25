@@ -8,8 +8,7 @@ class Config:
     SERVER = os.environ["SERVER"]
     DATABASE = os.environ["DATABASE"]
 
-    TRAINING_WANDB_PROJECT = "housing-model-training"
-    INFERENCE_WANDB_PROJECT = "housing-model-inference"
+    WANDB_PROJECT = "housing-model"
 
     RAW_DATA_PATH = "data/raw/data.parquet"
     PREPROCESSED_DATA_PATH = "data/preprocessed/clean_data.parquet"

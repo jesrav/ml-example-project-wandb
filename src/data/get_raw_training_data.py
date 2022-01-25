@@ -1,9 +1,6 @@
 """
 Module to get raw dataset and log it as a versioned artifact.
 """
-from tempfile import TemporaryDirectory
-from datetime import datetime
-
 import pandas as pd
 from sklearn.datasets import fetch_california_housing
 import wandb
@@ -22,7 +19,7 @@ def get_example_data() -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    with wandb.init(project=config.TRAINING_WANDB_PROJECT, job_type="get-raw-data") as run:
+    with wandb.init(project=config.WANDB_PROJECT, job_type="get-raw-data") as run:
         logger.info("Load raw data")
         df = get_example_data()
 

@@ -4,21 +4,19 @@ channels:
   - defaults
 dependencies:
   - python==3.9
+  - make
+  - pip
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - scikit-plot
+  - jupyter
+  - pyarrow
+  - seaborn
   - pip:
-    - pandas
-    - sklearn
-    - matplotlib
-    - scikit-plot
     - click
-    - sklego
-    - sqlalchemy
     - python-dotenv
-    - azure-storage-blob
     - rich
-    - pyodbc
-    - pyarrow
     - pandera
-    - seaborn
-    - mlflow
     - evidently
-    - jupyter
+    - wandb

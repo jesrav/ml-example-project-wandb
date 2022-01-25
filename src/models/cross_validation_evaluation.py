@@ -1,8 +1,8 @@
-import importlib
 import pickle
 from tempfile import TemporaryDirectory, TemporaryFile
 from typing import Type
 
+import joblib
 import click
 from sklearn.model_selection import cross_val_predict
 import wandb
@@ -15,7 +15,7 @@ from src.logger import logger
 
 
 def train(model_config: Type[model_configs.BaseModelConfig]):
-    run = wandb.init(project=config.TRAINING_WANDB_PROJECT, job_type="Cross validation")
+    run = wandb.init(project=config.WANDB_PROJECT, job_type="Cross validation")
 
     pipeline = model_config.get_pipeline()
 
@@ -54,15 +54,14 @@ def train(model_config: Type[model_configs.BaseModelConfig]):
 
     with TemporaryDirectory() as tmpdirname:
         file_name = tmpdirname + "model.pickle"
-        with open(file_name, 'wb') as file:
-            pickle.dump(pipeline, file)
-            log_file(
-                run=run,
-                file_path=file_name,
-                type="model",
-                name="model",
-                descr="Trained pipeline"
-            )
+        joblib.dump(pipeline, file_name)
+        log_file(
+           run=run,
+           file_path=file_name,
+           type="model",
+           name="model",
+           descr="Trained pipeline"
+        )
 
 
 @click.command()

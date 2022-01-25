@@ -3,6 +3,7 @@ Module to add features.
 """
 import pandas as pd
 import wandb
+import click
 
 from src.config import config
 from src.logger import logger
@@ -21,10 +22,23 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-if __name__ == "__main__":
-    run = wandb.init(project=config.TRAINING_WANDB_PROJECT, job_type="add_features")
+@click.command()
+@click.option(
+    '--input-data-artifact',
+    type=str,
+)
+@click.option(
+    '--output-data-artifact',
+    type=str,
+)
+@click.option(
+    '--group',
+    type=str,
+)
+def main(input_data_artifact, output_data_artifact, group):
+    run = wandb.init(project=config.WANDB_PROJECT, job_type="add_features", group=group)
 
-    df = read_dataframe_artifact(run, "clean-data:latest")
+    df = read_dataframe_artifact(run, input_data_artifact)
 
     logger.info(f"Add features.")
     df = add_features(df)
@@ -32,8 +46,11 @@ if __name__ == "__main__":
     log_dataframe(
         run=run,
         df=df,
-        type="modelling-data",
-        name="modelling-data",
-        descr="Data ready for modelling.",
+        type="model-input",
+        name=output_data_artifact,
+        descr="Data ready for inference.",
     )
 
+
+if __name__ == "__main__":
+    main()

@@ -1,32 +1,53 @@
-data: get_raw_data preprocess_data add_features train_validate_split
+train_pipeline: get_raw_data_train preprocess_data_train add_features_train
+train_pipeline: train_validate_split cross_validation_evaluation
+###############################################################
+# Train pipeline
+###############################################################
+get_raw_data_train:
+	python src/data/get_raw_training_data.py
 
-get_raw_data:
-	python src/data/get_raw_data.py
+preprocess_data_train:
+	python src/data/process_data.py \
+	--input-data-artifact "raw-data:latest" \
+	--output-data-artifact "clean-data" \
+	--group "training-pipeline"
 
-preprocess_data:
-	python src/data/process_data.py
-
-add_features:
-	python src/data/add_features.py
+add_features_train:
+	python src/data/add_features.py \
+	--input-data-artifact "clean-data:latest" \
+	--output-data-artifact "modelling-data" \
+	--group "training-pipeline"
 
 train_validate_split:
 	python src/data/data_segregation.py
 
 cross_validation_evaluation:
 	python src/models/cross_validation_evaluation.py \
-	--data-in-path data/preprocessed/train.parquet \
-	--model-artifact-folder model-artifacts/cross_validation \
-	--model-config src.models.model_configs.rf_model_config
+	--model-config-class RidgeConfig
 
-hyperparam_search:
-	python src/models/cross_validation_optuna_search.py \
-	src.models.model_configs.hyperparam_search_configs.ridge_config \
-	study.pickle \
-	--n-trials 10
+###############################################################
+# Inference pipeline
+###############################################################
+inference_pipeline: get_raw_inference_data preprocess_inference_data add_features
+inference_pipeline: inference
 
-make hold_out_evaluation:
-	python src/models/evaluate_on_hold_out.py \
-	--model-in-path model-artifacts/ml_pipeline_trained_on_train.pickle
+get_raw_inference_data:
+	python src/data/get_raw_inference_data.py
 
-predict:
-	python src/models/predict.py
+preprocess_inference_data:
+	python src/data/process_data.py \
+	--input-data-artifact "raw-inference-data:latest" \
+	--output-data-artifact "clean-inference-data" \
+	--group "inference-pipeline"
+
+add_features:
+	python src/data/add_features.py \
+	--input-data-artifact "clean-inference-data:latest" \
+	--output-data-artifact "inference-data" \
+	--group "inference-pipeline"
+
+inference:
+	python src/models/inference.py \
+	--input-data-artifact "inference-data:latest" \
+	--output-data-artifact "predictions" \
+	--group "inference-pipeline"

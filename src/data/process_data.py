@@ -1,6 +1,7 @@
 """
 Module to do preprocessing of data.
 """
+import click
 import pandas as pd
 import wandb
 
@@ -13,10 +14,23 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-if __name__ == "__main__":
-    run = wandb.init(project=config.TRAINING_WANDB_PROJECT, job_type="process_data")
+@click.command()
+@click.option(
+    '--input-data-artifact',
+    type=str,
+)
+@click.option(
+    '--output-data-artifact',
+    type=str,
+)
+@click.option(
+    '--group',
+    type=str,
+)
+def main(input_data_artifact, output_data_artifact, group):
+    run = wandb.init(project=config.WANDB_PROJECT, job_type="process_data", group=group)
 
-    df = read_dataframe_artifact(run, "raw-data:latest")
+    df = read_dataframe_artifact(run, input_data_artifact)
 
     logger.info(f"Preprocess raw data.")
     df = preprocess(df)
@@ -26,7 +40,11 @@ if __name__ == "__main__":
         run=run,
         df=df,
         type="clean-data",
-        name="clean-data",
+        name=output_data_artifact,
         descr="Cleaned data.",
     )
+
+
+if __name__ == "__main__":
+    main()
 
