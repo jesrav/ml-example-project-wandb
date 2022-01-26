@@ -10,14 +10,6 @@ class Config:
 
     WANDB_PROJECT = "housing-model"
 
-    RAW_DATA_PATH = "data/raw/data.parquet"
-    PREPROCESSED_DATA_PATH = "data/preprocessed/clean_data.parquet"
-    MODELLING_DATA_PATH = "data/preprocessed/modelling_data.parquet"
-    TRAIN_DF_PATH = "data/preprocessed/train.parquet"
-    VALIDATION_DF_PATH = "data/preprocessed/validation.parquet"
-    CROSS_VALIDATION_EVAL_PATH = "model-artifacts/cross_validation"
-    HOLD_OUT_EVAL_PATH = "model-artifacts/hold_out"
-
     REGISTERED_MODEL_NAME = "house-price-model"
     VALIDATION_SET_RATIO = 0.2
     DEFAULT_MODEL_CONFIG = "src.models.model_configs.prod_model_config"

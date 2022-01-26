@@ -1,11 +1,10 @@
-import pickle
-from tempfile import TemporaryDirectory, TemporaryFile
+from tempfile import TemporaryDirectory
 from typing import Type
 
 import joblib
-import click
 from sklearn.model_selection import cross_val_predict
 import wandb
+import hydra
 
 from src.models.evaluation import RegressionEvaluation
 from src.models.model_configs import model_configs
@@ -14,10 +13,10 @@ from src.config import config
 from src.logger import logger
 
 
-def train(model_config: Type[model_configs.BaseModelConfig]):
+def train(model_config_class: Type[model_configs.BaseModelConfig], model_config: dict):
     run = wandb.init(project=config.WANDB_PROJECT, job_type="Cross validation")
 
-    pipeline = model_config.get_pipeline()
+    pipeline = model_config_class.get_pipeline(**model_config)
 
     logger.info("Read training data.")
     df = read_dataframe_artifact(run, "train-validate-data:latest")
@@ -50,8 +49,7 @@ def train(model_config: Type[model_configs.BaseModelConfig]):
             descr="Artifacts created when evaluating model performance"
         )
 
-    logger.info("Logging model trained on all data to mlflow.")
-
+    logger.info("Logging model trained on all data as an artifact.")
     with TemporaryDirectory() as tmpdirname:
         file_name = tmpdirname + "model.pickle"
         joblib.dump(pipeline, file_name)
@@ -64,17 +62,10 @@ def train(model_config: Type[model_configs.BaseModelConfig]):
         )
 
 
-@click.command()
-@click.option(
-    '--model-config-class',
-    type=str,
-    help="Module with model config.",
-    default=config.DEFAULT_MODEL_CONFIG
-)
-def main(model_config_class):
-    logger.info(f"Importing model configuration from module {model_config_class}.")
-    model_config = getattr(model_configs, model_config_class)
-    train(model_config)
+@hydra.main(config_path="../../", config_name="config")
+def main(config):
+    from src.models.model_configs.model_configs import RidgeConfig
+    train(RidgeConfig, config["ridge_pipeline"])
 
 
 if __name__ == '__main__':
