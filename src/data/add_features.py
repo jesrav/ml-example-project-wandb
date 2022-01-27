@@ -1,11 +1,11 @@
 """
 Module to add features.
 """
+import hydra
 import pandas as pd
 import wandb
 import click
 
-from src.config import config
 from src.logger import logger
 from src.utils import read_dataframe_artifact, log_dataframe
 
@@ -22,34 +22,29 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-@click.command()
-@click.option(
-    '--input-artifacts-artifact',
-    type=str,
-)
-@click.option(
-    '--output-artifacts-artifact',
-    type=str,
-)
-@click.option(
-    '--group',
-    type=str,
-)
-def main(input_data_artifact, output_data_artifact, group):
-    run = wandb.init(project=config.WANDB_PROJECT, job_type="add_features", group=group)
+@hydra.main(config_path="../../conf", config_name="config")
+def main(config):
+    with wandb.init(
+            project=config["main"]["project_name"],
+            job_type="add_features",
+            group=config["main"]["experiment_name"]
+    ) as run:
 
-    df = read_dataframe_artifact(run, input_data_artifact)
+        clean_data_name = config["artifacts"]["clean_data"]["name"]
+        clean_data_version = config["artifacts"]["clean_data"]["version"]
+        df = read_dataframe_artifact(run, f"{clean_data_name}:{clean_data_version}")
 
-    logger.info(f"Add features.")
-    df = add_features(df)
+        logger.info(f"Add features.")
+        df = add_features(df)
 
-    log_dataframe(
-        run=run,
-        df=df,
-        type="model-input",
-        name=output_data_artifact,
-        descr="Data ready for inference.",
-    )
+        logger.info(f"Log modelling input data artifact.")
+        log_dataframe(
+            run=run,
+            df=df,
+            name=config["artifacts"]["model_input"]["name"],
+            type=config["artifacts"]["model_input"]["type"],
+            descr=config["artifacts"]["model_input"]["description"],
+        )
 
 
 if __name__ == "__main__":

@@ -2,4 +2,4 @@ defaults:
   - main: training-pipeline
   - model: ridge
   - evaluation: default
-  - artifacts: default
+  - artifacts: training-pipeline

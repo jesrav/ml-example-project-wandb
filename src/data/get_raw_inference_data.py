@@ -19,14 +19,13 @@ def main(config):
         logger.info("Get sample inference data.")
         df = get_example_data().sample(1000)
 
-        print(config["artifacts"]["raw_inference_data"])
         logger.info("Creating artifact")
         log_dataframe(
             run=run,
             df=df,
-            name=config["artifacts"]["raw_inference_data"]["name"],
-            type=config["artifacts"]["raw_inference_data"]["type"],
-            descr=config["artifacts"]["raw_inference_data"]["description"],
+            name=config["artifacts"]["raw_data"]["name"],
+            type=config["artifacts"]["raw_data"]["type"],
+            descr=config["artifacts"]["raw_data"]["description"],
         )
 
 

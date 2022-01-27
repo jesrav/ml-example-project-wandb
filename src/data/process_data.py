@@ -1,12 +1,11 @@
 """
 Module to do preprocessing of artifacts.
 """
-import click
+import hydra
 import pandas as pd
 import wandb
 
 from src.utils import log_dataframe, read_dataframe_artifact
-from src.config import config
 from src.logger import logger
 
 
@@ -14,35 +13,29 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-@click.command()
-@click.option(
-    '--input-artifacts-artifact',
-    type=str,
-)
-@click.option(
-    '--output-artifacts-artifact',
-    type=str,
-)
-@click.option(
-    '--group',
-    type=str,
-)
-def main(input_data_artifact, output_data_artifact, group):
-    run = wandb.init(project=config.WANDB_PROJECT, job_type="process_data", group=group)
+@hydra.main(config_path="../../conf", config_name="config")
+def main(config):
+    with wandb.init(
+            project=config["main"]["project_name"],
+            job_type="process-data",
+            group=config["main"]["experiment_name"]
+    ) as run:
 
-    df = read_dataframe_artifact(run, input_data_artifact)
+        raw_data_name = config["artifacts"]["raw_data"]["name"]
+        raw_data_version = config["artifacts"]["raw_data"]["version"]
+        df = read_dataframe_artifact(run, f"{raw_data_name}:{raw_data_version}")
 
-    logger.info(f"Preprocess raw artifacts.")
-    df = preprocess(df)
+        logger.info(f"Preprocess raw artifacts.")
+        df = preprocess(df)
 
-    logger.info(f"Log preprocessed artifacts.")
-    log_dataframe(
-        run=run,
-        df=df,
-        type="clean-artifacts",
-        name=output_data_artifact,
-        descr="Cleaned artifacts.",
-    )
+        logger.info(f"Log preprocessed artifacts.")
+        log_dataframe(
+            run=run,
+            df=df,
+            name=config["artifacts"]["clean_data"]["name"],
+            type=config["artifacts"]["clean_data"]["type"],
+            descr=config["artifacts"]["clean_data"]["description"],
+        )
 
 
 if __name__ == "__main__":

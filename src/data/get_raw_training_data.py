@@ -34,9 +34,9 @@ def main(config):
         log_dataframe(
             run=run,
             df=df,
-            name=config["artifacts"]["raw_training_data"]["name"],
-            type=config["artifacts"]["raw_training_data"]["type"],
-            descr=config["artifacts"]["raw_training_data"]["description"],
+            name=config["artifacts"]["raw_data"]["name"],
+            type=config["artifacts"]["raw_data"]["type"],
+            descr=config["artifacts"]["raw_data"]["description"],
         )
 
 
