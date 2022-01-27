@@ -130,8 +130,8 @@ class RandomForestPipeline(BasePipeline):
     @staticmethod
     def save_fitted_pipeline_plots(pipeline, out_dir: str):
         """Save plot of feature importances for random forest model."""
-        rf_features = pipeline["classifier"].feature_names_in_
-        rf_feature_importances = pipeline["classifier"].feature_importances_
+        rf_features = pipeline["regressor"].feature_names_in_
+        rf_feature_importances = pipeline["regressor"].feature_importances_
         feature_importance_df = pd.DataFrame(
             zip(
                 rf_features,

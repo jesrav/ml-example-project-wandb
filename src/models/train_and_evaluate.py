@@ -55,7 +55,8 @@ def train_evaluate(
 
     logger.info("Logging model evaluation artifacts.")
     with TemporaryDirectory() as tmpdirname:
-        model_evaluation.save_evaluation_artifacts(outdir=tmpdirname)
+        model_evaluation.save_evaluation_artifacts(out_dir=tmpdirname)
+        pipeline_class.save_fitted_pipeline_plots(pipeline, out_dir=tmpdirname)
         log_dir(
             run=run,
             dir_path=tmpdirname,
