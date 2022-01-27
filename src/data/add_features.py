@@ -25,19 +25,19 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     with wandb.init(
-            project=config["main"]["project_name"],
-            job_type="add_features",
-            group=config["main"]["experiment_name"]
-    ) as run:
+                project=config["main"]["project_name"],
+                job_type="add_features",
+                group=config["main"]["experiment_name"]
+        ) as run:
 
         clean_data_name = config["artifacts"]["clean_data"]["name"]
         clean_data_version = config["artifacts"]["clean_data"]["version"]
         df = read_dataframe_artifact(run, f"{clean_data_name}:{clean_data_version}")
 
-        logger.info(f"Add features.")
+        logger.info('Add features.')
         df = add_features(df)
 
-        logger.info(f"Log modelling input data artifact.")
+        logger.info('Log modelling input data artifact.')
         log_dataframe(
             run=run,
             df=df,
