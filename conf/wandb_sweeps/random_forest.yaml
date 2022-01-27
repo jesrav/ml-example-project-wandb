@@ -1,0 +1,17 @@
+name: random-forest-sweep
+project: housing-model
+program: src/models/cross_validation_evaluation.py
+command:
+  - ${env}
+  - ${interpreter}
+  - ${program}
+  - "model=random_forest"
+  - ${args_no_hyphens}
+method: bayes
+metric:
+  name: mae
+  goal: minimize
+parameters:
+  model.params.regressor__max_depth:
+    min: 1
+    max: 30

@@ -9,16 +9,18 @@ import hydra
 from src.models.evaluation import RegressionEvaluation
 from src.models import models
 from src.utils import read_dataframe_artifact, log_dir, log_file
-from src.config import config
 from src.logger import logger
 
+TARGET_COLUMN = "median_house_price"
 
-def train(pipeline_class: Type[models.BasePipeline], pipeline_config: dict):
-    run = wandb.init(project=config.WANDB_PROJECT, job_type="Cross validation", )
 
-    wandb.config.update(pipeline_config)
+def train_evaluate(
+    pipeline_class: Type[models.BasePipeline],
+    config: dict,
+):
+    run = wandb.init(project=config["main"]["project_name"], job_type="Cross validation", config=dict(config))
 
-    pipeline = pipeline_class.get_pipeline(**pipeline_config)
+    pipeline = pipeline_class.get_pipeline(**(config["model"]["params"]))
 
     logger.info("Read training data.")
     df = read_dataframe_artifact(run, "train-validate-data:latest")
@@ -27,21 +29,23 @@ def train(pipeline_class: Type[models.BasePipeline], pipeline_config: dict):
     predictions = cross_val_predict(
         estimator=pipeline,
         X=df,
-        y=df[config.TARGET_COLUMN],
-        cv=config.CROSS_VALIDATION_FOLDS,
+        y=df[TARGET_COLUMN],
+        cv=config["evaluation"]["cross_validation_folds"],
         verbose=3,
     )
 
     model_evaluation = RegressionEvaluation(
-        y_true=df[config.TARGET_COLUMN],
+        y_true=df[TARGET_COLUMN],
         y_pred=predictions,
     )
 
     logger.info("train on model on all data")
-    pipeline.fit(df, df[config.TARGET_COLUMN])
+    pipeline.fit(df, df[TARGET_COLUMN])
 
     logger.info("Logging performance metrics.")
     run.summary.update(model_evaluation.get_metrics())
+
+    wandb.log(model_evaluation.get_metrics())
 
     logger.info("Logging model evaluation artifacts.")
     with TemporaryDirectory() as tmpdirname:
@@ -70,7 +74,10 @@ def train(pipeline_class: Type[models.BasePipeline], pipeline_config: dict):
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     model_class = getattr(models, config["model"]["model_class"])
-    train(model_class, config["model"]["params"])
+    train_evaluate(
+        pipeline_class=model_class,
+        config=config,
+    )
 
 
 if __name__ == '__main__':

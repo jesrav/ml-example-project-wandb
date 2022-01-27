@@ -21,9 +21,18 @@ add_features_train:
 train_validate_split:
 	python src/data/data_segregation.py
 
-cross_validation_evaluation:
-	python src/models/cross_validation_evaluation.py \
-	--model-config-class RidgeConfig
+train_ridge:
+	python src/models/cross_validation_evaluation.py model=ridge
+
+train_random_forest:
+	python src/models/cross_validation_evaluation.py model=random_forest
+
+sweep_ridge:
+	wandb sweep conf/wandb_sweeps/ridge.yaml
+
+sweep_random_forest:
+	wandb sweep conf/wandb_sweeps/random_forest.yaml
+
 
 ###############################################################
 # Inference pipeline
