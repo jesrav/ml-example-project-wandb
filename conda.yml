@@ -13,6 +13,7 @@ dependencies:
   - jupyter
   - pyarrow
   - seaborn
+  - hydra
   - pip:
     - click
     - python-dotenv

@@ -1,45 +1,44 @@
-from datetime import datetime
-from typing import Tuple
-
+import hydra
 import wandb
-import pandas as pd
 from sklearn.model_selection import train_test_split
-from src.config import config
+
 from src.logger import logger
 from src.utils import read_dataframe_artifact, log_dataframe
 
 
-def train_validate_split(
-    df: pd.DataFrame, validation_ratio: float
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    Splits dataframe into training data and a validation set
-    """
-    return train_test_split(df, test_size=validation_ratio)
+@hydra.main(config_path="../../conf", config_name="config")
+def main(config):
+    with wandb.init(
+                project=config["main"]["project_name"],
+                job_type="data_segregation",
+                group=config["main"]["experiment_name"]
+        ) as run:
+        model_input_data_name = config["artifacts"]["model_input"]["name"]
+        model_input_data_version = config["artifacts"]["model_input"]["version"]
+        df = read_dataframe_artifact(run, f"{model_input_data_name}:{model_input_data_version}")
+
+        logger.info('Split data in train/validate and test data.')
+        train_validate_df, test_df = train_test_split(
+            df,
+            test_size=config["evaluation"]["test_set_ratio"],
+        )
+
+        logger.info('Log train/validate and test data artifacts.')
+        log_dataframe(
+            run=run,
+            df=train_validate_df,
+            name=config["artifacts"]["train_validate_data"]["name"],
+            type=config["artifacts"]["train_validate_data"]["type"],
+            descr=config["artifacts"]["train_validate_data"]["description"],
+        )
+        log_dataframe(
+            run=run,
+            df=test_df,
+            name=config["artifacts"]["test_data"]["name"],
+            type=config["artifacts"]["test_data"]["type"],
+            descr=config["artifacts"]["test_data"]["description"],
+        )
 
 
 if __name__ == '__main__':
-    run = wandb.init(project=config.WANDB_PROJECT, job_type="data_segregation")
-
-    df = read_dataframe_artifact(run, "modelling-data:latest")
-
-    logger.info(f"Split data in train/validate and test data.")
-    train_df, validate_df = train_validate_split(
-        df,
-        config.VALIDATION_SET_RATIO,
-    )
-
-    log_dataframe(
-        run=run,
-        df=train_df,
-        type="train-validate-data",
-        name="train-validate-data",
-        descr="Data for training and validation.",
-    )
-    log_dataframe(
-        run=run,
-        df=validate_df,
-        type="test-data",
-        name="test-data",
-        descr="Data for testing.",
-    )
+    main()
