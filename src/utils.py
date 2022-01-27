@@ -3,8 +3,19 @@ from typing import Optional
 
 import pandas as pd
 import wandb
+from sklearn.datasets import fetch_california_housing
 
 from src.logger import logger
+
+
+def get_example_data(sample_size: Optional[int] = None) -> pd.DataFrame:
+    """Get california housing data."""
+    data = fetch_california_housing(as_frame=True)
+    df = data.data
+    df[TARGET_COLUMN] = data.target
+    if sample_size:
+        return df.sample(sample_size)
+    return df
 
 
 def log_file(run, file_path: str, type: str, name: str, descr: Optional[str] = "") -> None:

@@ -46,3 +46,9 @@ add_features_inference:
 
 batch_inference:
 	python src/models/inference.py main=inference-pipeline artifacts=inference-pipeline
+
+###############################################################
+# Drift detection pipeline
+###############################################################
+make drift_detection:
+	python src/data/feature_drift_detection.py main=drift-detection-pipeline artifacts=drift-detection-pipeline
