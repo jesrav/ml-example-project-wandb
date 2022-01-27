@@ -22,10 +22,10 @@ def train_evaluate(
 
     pipeline = pipeline_class.get_pipeline(**(config["model"]["params"]))
 
-    logger.info("Read training data.")
-    df = read_dataframe_artifact(run, "train-validate-data:latest")
+    logger.info("Read training artifacts.")
+    df = read_dataframe_artifact(run, "train-validate-artifacts:latest")
 
-    logger.info("predict on hold out data using cross validation.")
+    logger.info("predict on hold out artifacts using cross validation.")
     predictions = cross_val_predict(
         estimator=pipeline,
         X=df,
@@ -39,7 +39,7 @@ def train_evaluate(
         y_pred=predictions,
     )
 
-    logger.info("train on model on all data")
+    logger.info("train on model on all artifacts")
     pipeline.fit(df, df[TARGET_COLUMN])
 
     logger.info("Logging performance metrics.")
@@ -58,7 +58,7 @@ def train_evaluate(
             descr="Artifacts created when evaluating model performance"
         )
 
-    logger.info("Logging model trained on all data as an artifact.")
+    logger.info("Logging model trained on all artifacts as an artifact.")
     with TemporaryDirectory() as tmpdirname:
         file_name = tmpdirname + "model.pickle"
         joblib.dump(pipeline, file_name)

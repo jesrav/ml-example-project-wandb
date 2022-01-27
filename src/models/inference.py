@@ -17,11 +17,11 @@ def generate_sample_data(sample_size: int) -> pd.DataFrame:
 
 @click.command()
 @click.option(
-    '--input-data-artifact',
+    '--input-artifacts-artifact',
     type=str,
 )
 @click.option(
-    '--output-data-artifact',
+    '--output-artifacts-artifact',
     type=str,
 )
 @click.option(

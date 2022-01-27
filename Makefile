@@ -22,10 +22,10 @@ train_validate_split:
 	python src/data/data_segregation.py
 
 train_ridge:
-	python src/models/cross_validation_evaluation.py model=ridge
+	python src/models/train_and_evaluate.py model=ridge
 
 train_random_forest:
-	python src/models/cross_validation_evaluation.py model=random_forest
+	python src/models/train_and_evaluate.py model=random_forest
 
 sweep_ridge:
 	wandb sweep conf/wandb_sweeps/ridge.yaml
@@ -41,7 +41,7 @@ inference_pipeline: get_raw_inference_data preprocess_inference_data add_feature
 inference_pipeline: inference
 
 get_raw_inference_data:
-	python src/data/get_raw_inference_data.py
+	python src/data/get_raw_inference_data.py main=inference-pipeline
 
 preprocess_inference_data:
 	python src/data/process_data.py \

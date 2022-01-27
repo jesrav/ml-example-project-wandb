@@ -1,5 +1,5 @@
 """
-Module to do preprocessing of data.
+Module to do preprocessing of artifacts.
 """
 import click
 import pandas as pd
@@ -16,11 +16,11 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
 
 @click.command()
 @click.option(
-    '--input-data-artifact',
+    '--input-artifacts-artifact',
     type=str,
 )
 @click.option(
-    '--output-data-artifact',
+    '--output-artifacts-artifact',
     type=str,
 )
 @click.option(
@@ -32,16 +32,16 @@ def main(input_data_artifact, output_data_artifact, group):
 
     df = read_dataframe_artifact(run, input_data_artifact)
 
-    logger.info(f"Preprocess raw data.")
+    logger.info(f"Preprocess raw artifacts.")
     df = preprocess(df)
 
-    logger.info(f"Log preprocessed data.")
+    logger.info(f"Log preprocessed artifacts.")
     log_dataframe(
         run=run,
         df=df,
-        type="clean-data",
+        type="clean-artifacts",
         name=output_data_artifact,
-        descr="Cleaned data.",
+        descr="Cleaned artifacts.",
     )
 
 

@@ -24,11 +24,11 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
 
 @click.command()
 @click.option(
-    '--input-data-artifact',
+    '--input-artifacts-artifact',
     type=str,
 )
 @click.option(
-    '--output-data-artifact',
+    '--output-artifacts-artifact',
     type=str,
 )
 @click.option(

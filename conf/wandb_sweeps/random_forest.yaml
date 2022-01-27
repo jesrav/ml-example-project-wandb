@@ -1,6 +1,6 @@
 name: random-forest-sweep
 project: housing-model
-program: src/models/cross_validation_evaluation.py
+program: src/models/train_and_evaluate.py
 command:
   - ${env}
   - ${interpreter}
