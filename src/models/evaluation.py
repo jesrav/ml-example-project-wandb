@@ -57,10 +57,10 @@ class RegressionEvaluation:
         plt.savefig(str(outpath))
         plt.close()
 
-    def save_evaluation_artifacts(self, outdir: Path) -> None:
+    def save_evaluation_artifacts(self, out_dir: Path) -> None:
         """Save all evaluation artifacts to a folder"""
-        self.plot_actual_vs_predictions(outdir / Path("actual_vs_predictions_plot.png"))
-        with open(outdir / Path("metrics.json"), "w") as f:
+        self.plot_actual_vs_predictions(out_dir / Path("actual_vs_predictions_plot.png"))
+        with open(out_dir / Path("metrics.json"), "w") as f:
             json.dump(self.get_metrics(), f)
 
 
