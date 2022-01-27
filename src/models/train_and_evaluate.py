@@ -18,14 +18,20 @@ def train_evaluate(
     pipeline_class: Type[models.BasePipeline],
     config: dict,
 ):
-    run = wandb.init(project=config["main"]["project_name"], job_type="Cross validation", config=dict(config))
+    run = wandb.init(
+        project=config["main"]["project_name"],
+        job_type="cross_validation",
+        group=config["main"]["experiment_name"],
+    )
+    logger.info("Load data fro training model.")
+    train_data_name = config["artifacts"]["train_validate_data"]["name"]
+    train_data_version = config["artifacts"]["train_validate_data"]["version"]
+    df = read_dataframe_artifact(run, f"{train_data_name}:{train_data_version}")
 
+    logger.info("Initialize ml pipeline object.")
     pipeline = pipeline_class.get_pipeline(**(config["model"]["params"]))
 
-    logger.info("Read training artifacts.")
-    df = read_dataframe_artifact(run, "train-validate-artifacts:latest")
-
-    logger.info("predict on hold out artifacts using cross validation.")
+    logger.info("predict on hold out data using cross validation.")
     predictions = cross_val_predict(
         estimator=pipeline,
         X=df,
@@ -53,9 +59,9 @@ def train_evaluate(
         log_dir(
             run=run,
             dir_path=tmpdirname,
-            type="evaluation-artifacts",
-            name="evaluation-artifacts",
-            descr="Artifacts created when evaluating model performance"
+            type=config["artifacts"]["evaluation"]["type"],
+            name=config["artifacts"]["evaluation"]["name"],
+            descr=config["artifacts"]["evaluation"]["description"]
         )
 
     logger.info("Logging model trained on all artifacts as an artifact.")
@@ -65,9 +71,9 @@ def train_evaluate(
         log_file(
            run=run,
            file_path=file_name,
-           type="model",
-           name="model",
-           descr="Trained pipeline"
+            type=config["artifacts"]["model"]["type"],
+            name=config["artifacts"]["model"]["name"],
+            descr=config["artifacts"]["model"]["description"]
         )
 
 

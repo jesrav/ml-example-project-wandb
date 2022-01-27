@@ -12,7 +12,7 @@ preprocess_data_train:
 add_features_train:
 	python src/data/add_features.py main=training-pipeline artifacts=training-pipeline
 
-train_validate_split:
+data_segregation:
 	python src/data/data_segregation.py
 
 train_ridge:
@@ -44,7 +44,4 @@ add_features_inference:
 	python src/data/add_features.py main=inference-pipeline artifacts=inference-pipeline
 
 batch_inference:
-	python src/models/inference.py \
-	--input-data-artifact "inference-data:latest" \
-	--output-data-artifact "predictions" \
-	--group "inference-pipeline"
+	python src/models/inference.py main=inference-pipeline artifacts=inference-pipeline
