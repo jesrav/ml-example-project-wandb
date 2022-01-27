@@ -16,19 +16,19 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     with wandb.init(
-            project=config["main"]["project_name"],
-            job_type="process-data",
-            group=config["main"]["experiment_name"]
-    ) as run:
+                project=config["main"]["project_name"],
+                job_type="process-data",
+                group=config["main"]["experiment_name"]
+        ) as run:
 
         raw_data_name = config["artifacts"]["raw_data"]["name"]
         raw_data_version = config["artifacts"]["raw_data"]["version"]
         df = read_dataframe_artifact(run, f"{raw_data_name}:{raw_data_version}")
 
-        logger.info(f"Preprocess raw artifacts.")
+        logger.info('Preprocess raw artifacts.')
         df = preprocess(df)
 
-        logger.info(f"Log preprocessed artifacts.")
+        logger.info('Log preprocessed artifacts.')
         log_dataframe(
             run=run,
             df=df,
