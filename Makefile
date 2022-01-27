@@ -1,8 +1,9 @@
-train_pipeline: get_raw_data_train preprocess_data_train add_features_train
-train_pipeline: train_validate_split cross_validation_evaluation
 ###############################################################
 # Train pipeline
 ###############################################################
+train_pipeline: get_raw_data_train preprocess_data_train add_features_train
+train_pipeline: data_segregation train_random_forest
+
 get_raw_data_train:
 	python src/data/get_raw_training_data.py main=training-pipeline artifacts=training-pipeline
 
@@ -31,8 +32,8 @@ sweep_random_forest:
 ###############################################################
 # Inference pipeline
 ###############################################################
-inference_pipeline: get_raw_inference_data preprocess_inference_data add_features
-inference_pipeline: inference
+inference_pipeline: get_raw_data_inference preprocess_data_inference add_features_inference
+inference_pipeline: batch_inference
 
 get_raw_data_inference:
 	python src/data/get_raw_inference_data.py main=inference-pipeline artifacts=inference-pipeline
