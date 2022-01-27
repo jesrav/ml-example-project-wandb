@@ -20,7 +20,7 @@ from matplotlib import pyplot as plt
 from src.models.custom_transfomer_classes import DataFrameValidatior, ColumnSelector
 
 
-class BaseModelConfig(ABC):
+class BasePipeline(ABC):
     """Base class for ml model config."""
 
     @staticmethod
@@ -39,7 +39,7 @@ class BaseModelConfig(ABC):
         pass
 
 
-class RidgeConfig(BaseModelConfig):
+class RidgePipeline(BasePipeline):
     """Model config for ML pipeline using a logistic regression model."""
 
     @staticmethod
@@ -86,7 +86,7 @@ class RidgeConfig(BaseModelConfig):
         pass
 
 
-class RandomForestConfig(BaseModelConfig):
+class RandomForestPipeline(BasePipeline):
     """Model config for ML pipeline using a random forest model."""
 
     @staticmethod

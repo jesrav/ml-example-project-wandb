@@ -1,0 +1,3 @@
+test_set_ratio: 0.2
+cross_valTARGET_COLUMNidation_folds: 5
+target_column: "median_house_price"

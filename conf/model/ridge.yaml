@@ -1,0 +1,4 @@
+model_class: RidgePipeline
+params:
+  regressor__alpha: 2
+  regressor__fit_intercept: True

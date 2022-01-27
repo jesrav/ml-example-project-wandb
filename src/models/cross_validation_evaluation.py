@@ -7,16 +7,18 @@ import wandb
 import hydra
 
 from src.models.evaluation import RegressionEvaluation
-from src.models.model_configs import model_configs
+from src.models import models
 from src.utils import read_dataframe_artifact, log_dir, log_file
 from src.config import config
 from src.logger import logger
 
 
-def train(model_config_class: Type[model_configs.BaseModelConfig], model_config: dict):
-    run = wandb.init(project=config.WANDB_PROJECT, job_type="Cross validation")
+def train(pipeline_class: Type[models.BasePipeline], pipeline_config: dict):
+    run = wandb.init(project=config.WANDB_PROJECT, job_type="Cross validation", )
 
-    pipeline = model_config_class.get_pipeline(**model_config)
+    wandb.config.update(pipeline_config)
+
+    pipeline = pipeline_class.get_pipeline(**pipeline_config)
 
     logger.info("Read training data.")
     df = read_dataframe_artifact(run, "train-validate-data:latest")
@@ -37,6 +39,9 @@ def train(model_config_class: Type[model_configs.BaseModelConfig], model_config:
 
     logger.info("train on model on all data")
     pipeline.fit(df, df[config.TARGET_COLUMN])
+
+    logger.info("Logging performance metrics.")
+    run.summary.update(model_evaluation.get_metrics())
 
     logger.info("Logging model evaluation artifacts.")
     with TemporaryDirectory() as tmpdirname:
@@ -62,10 +67,10 @@ def train(model_config_class: Type[model_configs.BaseModelConfig], model_config:
         )
 
 
-@hydra.main(config_path="../../", config_name="config")
+@hydra.main(config_path="../../conf", config_name="config")
 def main(config):
-    from src.models.model_configs.model_configs import RidgeConfig
-    train(RidgeConfig, config["ridge_pipeline"])
+    model_class = getattr(models, config["model"]["model_class"])
+    train(model_class, config["model"]["params"])
 
 
 if __name__ == '__main__':

@@ -1,0 +1,4 @@
+defaults:
+  - main: dev
+  - model: ridge
+  - evaluation: evaluation
