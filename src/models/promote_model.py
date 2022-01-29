@@ -9,7 +9,7 @@ import wandb
 
 from src.logger import logger
 from src.models.evaluation import RegressionEvaluation
-from src.utils import read_dataframe_artifact, log_file
+from src.utils import read_dataframe_artifact
 
 
 class ModelDoesNoteExistError(Exception):
