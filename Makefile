@@ -22,6 +22,10 @@ train_ridge:
 train_random_forest:
 	python src/models/train_and_evaluate.py model=random_forest
 
+
+test_and_promote_model:
+	python src/models/promote_model.py main=training-pipeline artifacts=training-pipeline
+
 sweep_ridge:
 	wandb sweep conf/wandb_sweeps/ridge.yaml
 

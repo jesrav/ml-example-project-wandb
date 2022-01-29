@@ -48,7 +48,7 @@ def main(config):
     logger.info("Load data used for inference.")
     model_input_name = config['artifacts']['model_input']['name']
     model_input_version = config['artifacts']['model_input']['version']
-    inference_data = read_dataframe_artifact(run=run, arrtifact_tag=f"{model_input_name}:{model_input_version}")
+    inference_data = read_dataframe_artifact(run=run, artifact_tag=f"{model_input_name}:{model_input_version}")
 
     logger.info("Create and log data drift report.")
     data_drift_report = Dashboard(tabs=[DataDriftTab()])

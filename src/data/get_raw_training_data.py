@@ -7,8 +7,6 @@ import wandb
 from src.utils import log_dataframe, get_example_data
 from src.logger import logger
 
-TARGET_COLUMN = "median_house_price"
-
 
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):

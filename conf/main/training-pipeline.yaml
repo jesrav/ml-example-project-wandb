@@ -1,2 +1,5 @@
 project_name: housing-model
 experiment_name: training-pipeline
+target_column: "median_house_price"
+max_mae_to_promote: 0.4
+min_percent_perfomance_boost_to_promote: 0.01
