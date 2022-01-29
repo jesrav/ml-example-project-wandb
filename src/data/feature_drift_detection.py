@@ -62,9 +62,9 @@ def main(config):
         log_file(
             run=run,
             file_path=data_drift_report_file_name,
-            type=config["artifacts"]["data_drift_report"]["type"],
-            name=config["artifacts"]["data_drift_report"]["name"],
-            descr=config["artifacts"]["data_drift_report"]["description"]
+            type=config["artifacts"]["feature_drift_report"]["type"],
+            name=config["artifacts"]["feature_drift_report"]["name"],
+            descr=config["artifacts"]["feature_drift_report"]["description"]
         )
 
     logger.info("Create and log data drift profile.")
@@ -80,16 +80,16 @@ def main(config):
         log_file(
             run=run,
             file_path=data_drift_profile_file_name,
-            type=config["artifacts"]["data_drift_profile"]["type"],
-            name=config["artifacts"]["data_drift_profile"]["name"],
-            descr=config["artifacts"]["data_drift_profile"]["description"]
+            type=config["artifacts"]["feature_drift_profile"]["type"],
+            name=config["artifacts"]["feature_drift_profile"]["name"],
+            descr=config["artifacts"]["feature_drift_profile"]["description"]
         )
 
     n_drifted_features = data_drift_profile.analyzers_results[DataDriftAnalyzer].metrics.n_drifted_features
 
     if n_drifted_features > 0:
         logger.warning(
-            f"Data drift detected on {n_drifted_features}. Check data drift report and profile in run:{run.get_url()}"
+            f"Feature drift detected on {n_drifted_features}. Check data drift report and profile in run:{run.get_url()}"
         )
 
 
