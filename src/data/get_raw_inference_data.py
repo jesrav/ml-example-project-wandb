@@ -4,8 +4,7 @@ Module to get raw dataset and log it as a versioned artifact.
 import hydra
 import wandb
 
-from src.data.get_raw_training_data import get_example_data
-from src.utils import log_dataframe
+from src.utils import log_dataframe, get_example_data
 from src.logger import logger
 
 
@@ -17,7 +16,7 @@ def main(config):
             group=config["main"]["experiment_name"]
     ) as run:
         logger.info("Get sample inference data.")
-        df = get_example_data().sample(1000)
+        df = get_example_data(sample_size=1000)
 
         logger.info("Creating artifact")
         log_dataframe(

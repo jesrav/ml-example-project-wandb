@@ -11,8 +11,6 @@ from src.models import models
 from src.utils import read_dataframe_artifact, log_dir, log_file
 from src.logger import logger
 
-TARGET_COLUMN = "median_house_price"
-
 
 def train_evaluate(
     pipeline_class: Type[models.BasePipeline],
@@ -23,6 +21,9 @@ def train_evaluate(
         job_type="cross_validation",
         group=config["main"]["experiment_name"],
     )
+
+    target_column = config["main"]["target_column"]
+
     logger.info("Load data fro training model.")
     train_data_name = config["artifacts"]["train_validate_data"]["name"]
     train_data_version = config["artifacts"]["train_validate_data"]["version"]
@@ -35,18 +36,18 @@ def train_evaluate(
     predictions = cross_val_predict(
         estimator=pipeline,
         X=df,
-        y=df[TARGET_COLUMN],
+        y=df[target_column],
         cv=config["evaluation"]["cross_validation_folds"],
         verbose=3,
     )
 
     model_evaluation = RegressionEvaluation(
-        y_true=df[TARGET_COLUMN],
+        y_true=df[target_column],
         y_pred=predictions,
     )
 
     logger.info("train on model on all artifacts")
-    pipeline.fit(df, df[TARGET_COLUMN])
+    pipeline.fit(df, df[target_column])
 
     logger.info("Logging performance metrics.")
     run.summary.update(model_evaluation.get_metrics())

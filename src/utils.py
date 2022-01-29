@@ -3,8 +3,19 @@ from typing import Optional
 
 import pandas as pd
 import wandb
+from sklearn.datasets import fetch_california_housing
 
 from src.logger import logger
+
+
+def get_example_data(sample_size: Optional[int] = None) -> pd.DataFrame:
+    """Get california housing data."""
+    data = fetch_california_housing(as_frame=True)
+    df = data.data
+    df["median_house_price"] = data.target
+    if sample_size:
+        return df.sample(sample_size)
+    return df
 
 
 def log_file(run, file_path: str, type: str, name: str, descr: Optional[str] = "") -> None:
@@ -42,9 +53,9 @@ def log_dataframe(run, df: pd.DataFrame, type: str, name: str, descr: Optional[s
         log_file(run, file_name, type, name, descr)
 
 
-def read_dataframe_artifact(run, arrtifact_tag):
-    logger.info(f"Downloading artifact {arrtifact_tag}")
-    artifact = run.use_artifact(arrtifact_tag)
+def read_dataframe_artifact(run, artifact_tag):
+    logger.info(f"Downloading artifact {artifact_tag}")
+    artifact = run.use_artifact(artifact_tag)
     artifact_path = artifact.file()
     return pd.read_parquet(artifact_path)
 

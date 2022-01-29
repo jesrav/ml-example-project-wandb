@@ -4,7 +4,6 @@ Module to add features.
 import hydra
 import pandas as pd
 import wandb
-import click
 
 from src.logger import logger
 from src.utils import read_dataframe_artifact, log_dataframe

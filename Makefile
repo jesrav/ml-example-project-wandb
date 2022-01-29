@@ -22,6 +22,10 @@ train_ridge:
 train_random_forest:
 	python src/models/train_and_evaluate.py model=random_forest
 
+
+test_and_promote_model:
+	python src/models/promote_model.py main=training-pipeline artifacts=training-pipeline
+
 sweep_ridge:
 	wandb sweep conf/wandb_sweeps/ridge.yaml
 
@@ -46,3 +50,9 @@ add_features_inference:
 
 batch_inference:
 	python src/models/inference.py main=inference-pipeline artifacts=inference-pipeline
+
+###############################################################
+# Drift detection pipeline
+###############################################################
+make drift_detection:
+	python src/data/feature_drift_detection.py main=drift-detection-pipeline artifacts=drift-detection-pipeline
