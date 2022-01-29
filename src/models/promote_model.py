@@ -58,8 +58,9 @@ def main(config):
     )
     if "prod" in latest_model_artifact.aliases:
         logger.warning(
-            f"Latest model is already the production model. No new model to promote."
+            'Latest model is already the production model. No new model to promote.'
         )
+
         return
     run.use_artifact(latest_model_artifact)
     latest_model_path = latest_model_artifact.file()
