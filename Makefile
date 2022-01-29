@@ -2,7 +2,7 @@
 # Train pipeline
 ###############################################################
 train_pipeline: get_raw_data_train preprocess_data_train add_features_train
-train_pipeline: data_segregation train_random_forest
+train_pipeline: data_segregation train_random_forest test_and_promote_model
 
 get_raw_data_train:
 	python src/data/get_raw_training_data.py main=training-pipeline artifacts=training-pipeline

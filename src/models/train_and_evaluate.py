@@ -20,6 +20,7 @@ def train_evaluate(
         project=config["main"]["project_name"],
         job_type="cross_validation",
         group=config["main"]["experiment_name"],
+        config=dict(config)
     )
 
     target_column = config["main"]["target_column"]
