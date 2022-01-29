@@ -1,9 +1,8 @@
 """
-Module for doing drift detection
+Script for promoting latest trained model to production if the performance on a hold out set:
+- is better than a fixed threshold.
+- is better than the current production model.
 """
-import sys
-from tempfile import TemporaryDirectory
-
 import hydra
 import joblib
 import wandb
