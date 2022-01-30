@@ -87,7 +87,7 @@ def main(config):
 
     n_drifted_features = data_drift_profile.analyzers_results[DataDriftAnalyzer].metrics.n_drifted_features
 
-    if n_drifted_features == 0:
+    if n_drifted_features > 0:
         warning_text = (
             f"Feature drift detected for {n_drifted_features} features. "
             f"Check data drift report and profile in run:{run.get_url()}"
