@@ -1,5 +1,5 @@
 model_class: RandomForestPipeline
 params:
-  regressor__max_depth: 10
-  regressor__min_samples_split: 2
-  regressor__max_features: "auto"
+  regressor__max_depth: 23
+  regressor__min_samples_split: 8
+  regressor__max_features: "log2"

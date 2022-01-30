@@ -59,6 +59,11 @@ def main(config):
         logger.warning(
             'Latest model is already the production model. No new model to promote.'
         )
+        wandb.alert(
+            title='Model not promoted.',
+            text=f'Latest model is already the production model. No new model to promote',
+            level=wandb.AlertLevel.WARN,
+        )
 
         return
     run.use_artifact(latest_model_artifact)
@@ -75,9 +80,13 @@ def main(config):
     performance_th = config["main"]["max_mae_to_promote"]
 
     if evaluation.get_metrics()["mae"] > config["main"]["max_mae_to_promote"]:
-        logger.warning(
-            f"Trained model has MAE of {model_performance}, which is not below maximum MAE of {performance_th}. "
-            f"Model is not promoted."
+        warning_text = f"Trained model has MAE of {model_performance}, " \
+                       f"which is not below maximum MAE of {performance_th}. Model is not promoted."
+        logger.warning(warning_text)
+        wandb.alert(
+            title='Model not promoted.',
+            text=warning_text,
+            level=wandb.AlertLevel.WARN,
         )
         return
     else:
@@ -104,7 +113,7 @@ def main(config):
         )
         return
 
-    logger.info("Predictimng on hold out test set to get model performance of current prod model.")
+    logger.info("Predicting on hold out test set to get model performance of current prod model.")
     predictions_prod = current_prod_model.predict(test_data)
     evaluation_prod = RegressionEvaluation(
         y_true=test_data[config["main"]["target_column"]],
@@ -118,11 +127,22 @@ def main(config):
             model_name=config['artifacts']['model']['name'],
             model_version="latest"
         )
+        wandb.alert(
+            title='Model not promoted.',
+            text="Latest model has better performance. The model was promoted to prod.",
+            level=wandb.AlertLevel.INFO,
+        )
     else:
-        logger.warning(
+        warning_text = (
             f"Latest trained model has MAE of {model_performance}, which is not lower than current prod model, "
             f"with a MAE of {model_performance_prod}. "
             f"Model is not promoted."
+        )
+        logger.warning(warning_text)
+        wandb.alert(
+            title='New model promoted to prod.',
+            text=warning_text,
+            level=wandb.AlertLevel.WARN,
         )
 
 
