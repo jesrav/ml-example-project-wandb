@@ -140,5 +140,5 @@ cython_debug/
 
 # Artifacts and runs from wandb
 wandb
-artifacts
+/artifacts
 outputs

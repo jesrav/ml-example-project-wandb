@@ -1,0 +1,18 @@
+model_input:
+  name: model_input_inference
+  type: model_input
+  description: "Model input for making batch inferences with ML pipeline."
+  version: latest
+model:
+  name: model
+  type: model
+  description: "Trained ML pipeline."
+  version: prod
+feature_drift_report:
+  name: feature_drift_report
+  type: feature_drift_report
+  description: "Feature drift report."
+feature_drift_profile:
+  name: feature_drift_profile
+  type: feature_drift_profile
+  description: "Feature drift profile."

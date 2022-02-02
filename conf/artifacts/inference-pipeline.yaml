@@ -1,0 +1,24 @@
+raw_data:
+  name: raw_inference_data
+  type: raw_data
+  description: "Raw data for inference pipeline."
+  version: latest
+clean_data:
+  name: clean_inference_data
+  type: clean_data
+  description: "Clean data for inference pipeline."
+  version: latest
+model_input:
+  name: model_input_inference
+  type: model_input
+  description: "Model input for making batch inferences with ML pipeline."
+  version: latest
+model:
+  name: model
+  type: model
+  description: "Trained ML pipeline."
+  version: prod
+predictions:
+  name: predictions
+  type: predictions
+  description: "Predictions made by model."

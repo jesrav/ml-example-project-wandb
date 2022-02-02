@@ -1,0 +1,35 @@
+raw_data:
+  name: raw_training_data
+  type: raw_data
+  description: "Raw data for training pipeline."
+  version: latest
+clean_data:
+  name: clean_training_data
+  type: clean_data
+  description: "Clean data for training pipeline."
+  version: latest
+model_input:
+  name: model_input_training
+  type: model_input
+  description: "Model input for training ML pipeline."
+  version: latest
+train_validate_data:
+  name: train_validate_data
+  type: train_validate_data
+  description: "Data for training model and validating performance for hyperparameters."
+  version: latest
+test_data:
+  name: test_data
+  type: test_data
+  description: "Data for evaluating performance on hold out set."
+  version: latest
+evaluation:
+  name: evaluation
+  type: evaluation
+  description: "Artifacts from evaluating an ML model on out of sample data."
+  version: latest
+model:
+  name: model
+  type: model
+  description: "Trained ML pipeline."
+  version: prod
