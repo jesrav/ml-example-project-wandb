@@ -13,7 +13,6 @@ dependencies:
   - jupyter
   - pyarrow
   - seaborn
-  - hydra
   - pip:
     - click
     - python-dotenv
@@ -21,3 +20,4 @@ dependencies:
     - pandera
     - evidently
     - wandb
+    - hydra-core
