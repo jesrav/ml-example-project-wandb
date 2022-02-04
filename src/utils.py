@@ -53,7 +53,7 @@ def log_dir(run, dir_path: str, type: str, name: str, description: Optional[str]
 def log_dataframe(run, df: pd.DataFrame, type: str, name: str, description: Optional[str] = "", **kwargs) -> None:
     _ = kwargs
     with TemporaryDirectory() as tmpdirname:
-        file_name = tmpdirname + "artifacts.parquet"
+        file_name = f'{tmpdirname}artifacts.parquet'
         df.to_parquet(file_name)
         log_file(run, file_name, type, name, description)
 

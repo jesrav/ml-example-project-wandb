@@ -61,7 +61,7 @@ def train_evaluate(
 
     logger.info("Logging model trained on all artifacts as an artifact.")
     with TemporaryDirectory() as tmpdirname:
-        file_name = tmpdirname + "model.pickle"
+        file_name = f'{tmpdirname}model.pickle'
         joblib.dump(pipeline, file_name)
         log_file(run=run, file_path=file_name, **config["artifacts"]["model"])
 
