@@ -13,7 +13,7 @@ from src.logger import logger
 
 
 def train_evaluate(
-    pipeline_class: Type[models.BasePipeline],
+    pipeline_class: Type[models.BasePipelineConfig],
     config: dict,
 ):
     run = wandb.init(
@@ -68,7 +68,7 @@ def train_evaluate(
 
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
-    model_class = getattr(models, config["model"]["model_class"])
+    model_class = getattr(models, config["model"]["ml_pipeline_config"])
     train_evaluate(
         pipeline_class=model_class,
         config=config,

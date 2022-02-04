@@ -1,4 +1,4 @@
-model_class: RandomForestPipeline
+ml_pipeline_config: RandomForestPipelineConfig
 params:
   regressor__max_depth: 23
   regressor__min_samples_split: 8

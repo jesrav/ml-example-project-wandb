@@ -1,9 +1,7 @@
 """
 Module that holds the ml model configs.
 Any model config that needs to work with the `src/modelling/train_evaluate.py` module,
-must conform to this interface specified in the meta class BaseModelConfig.
-Author: Jes Ravnbøl
-Created: 2022-01-17
+must conform to this interface specified in the meta class BasePipelineConfig.
 """
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -20,8 +18,8 @@ from matplotlib import pyplot as plt
 from src.models.custom_transfomer_classes import DataFrameValidatior, ColumnSelector
 
 
-class BasePipeline(ABC):
-    """Base class for ml model config."""
+class BasePipelineConfig(ABC):
+    """Base class for ml model configs."""
 
     @staticmethod
     @abstractmethod
@@ -39,7 +37,7 @@ class BasePipeline(ABC):
         pass
 
 
-class RidgePipeline(BasePipeline):
+class RidgePipelineConfig(BasePipelineConfig):
     """Model config for ML pipeline using a logistic regression model."""
 
     @staticmethod
@@ -86,7 +84,7 @@ class RidgePipeline(BasePipeline):
         pass
 
 
-class RandomForestPipeline(BasePipeline):
+class RandomForestPipelineConfig(BasePipelineConfig):
     """Model config for ML pipeline using a random forest model."""
 
     @staticmethod
