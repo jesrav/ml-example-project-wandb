@@ -1,6 +1,7 @@
 """
 Module for doing drift detection
 """
+from curses.panel import version
 from tempfile import TemporaryDirectory
 
 import hydra
@@ -24,8 +25,13 @@ def get_model_training_data(run, project_name, model_name, model_version) -> pd.
     except wandb.errors.CommError as e:
         raise ValueError(f"Trained model version does not exist. From WANDB: {e}")
     training_run = artifact.logged_by()
-    training_data_artifact_name =  training_run.used_artifacts()[0]._artifact_name
-    return read_dataframe_artifact(run, training_data_artifact_name)
+    training_data_artifact_name_and_version =  training_run.used_artifacts()[0]._artifact_name
+    training_data_artifact_name, training_data_artifact_version = (
+        training_data_artifact_name_and_version.split(":")
+    )
+    return read_dataframe_artifact(
+        run, name=training_data_artifact_name, version=training_data_artifact_version
+    )
 
 
 @hydra.main(config_path="../../conf", config_name="config")
@@ -46,9 +52,7 @@ def main(config):
     # Most likely implemented as a rolling window. In this case we are just getting
     # data from the last batch inference.
     logger.info("Load data used for inference.")
-    model_input_name = config['artifacts']['model_input']['name']
-    model_input_version = config['artifacts']['model_input']['version']
-    inference_data = read_dataframe_artifact(run=run, artifact_tag=f"{model_input_name}:{model_input_version}")
+    inference_data = read_dataframe_artifact(run=run, **config['artifacts']['model_input'])
 
     logger.info("Create and log data drift report.")
     data_drift_report = Dashboard(tabs=[DataDriftTab()])
@@ -62,9 +66,7 @@ def main(config):
         log_file(
             run=run,
             file_path=data_drift_report_file_name,
-            type=config["artifacts"]["feature_drift_report"]["type"],
-            name=config["artifacts"]["feature_drift_report"]["name"],
-            descr=config["artifacts"]["feature_drift_report"]["description"]
+            **config["artifacts"]["feature_drift_report"]
         )
 
     logger.info("Create and log data drift profile.")
@@ -80,11 +82,10 @@ def main(config):
         log_file(
             run=run,
             file_path=data_drift_profile_file_name,
-            type=config["artifacts"]["feature_drift_profile"]["type"],
-            name=config["artifacts"]["feature_drift_profile"]["name"],
-            descr=config["artifacts"]["feature_drift_profile"]["description"]
+            **config["artifacts"]["feature_drift_profile"]
         )
 
+    # Get number of drifted features from analyzer
     n_drifted_features = data_drift_profile.analyzers_results[DataDriftAnalyzer].metrics.n_drifted_features
 
     if n_drifted_features > 0:

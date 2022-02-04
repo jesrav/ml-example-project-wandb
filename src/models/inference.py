@@ -4,7 +4,7 @@ import joblib
 import wandb
 
 from src.logger import logger
-from src.utils import read_dataframe_artifact, log_dataframe
+from src.utils import read_dataframe_artifact, log_dataframe, get_model_artifact
 
 
 @hydra.main(config_path="../../conf", config_name="config")
@@ -16,32 +16,24 @@ def main(config):
     )
 
     logger.info("Load model.")
-    model_name = config['artifacts']['model']['name']
-    model_version = config['artifacts']['model']['version']
-    try:
-        model_artifact = run.use_artifact(f"{model_name}:{model_version}")
-    except wandb.errors.CommError as e:
-        raise ValueError(f"Trained model version does not exist. From WANDB: {e}")
+    model_artifact = get_model_artifact(
+        config["main"]["project_name"], 
+        config['artifacts']['model'],
+        config['artifacts']['model']['version']
+    )
+    run.use_artifact(model_artifact)
     artifact_path = model_artifact.file()
     model = joblib.load(artifact_path)
 
     logger.info("Get model input.")
-    model_input_name = config['artifacts']['model_input']['name']
-    model_input_version = config['artifacts']['model_input']['version']
-    df = read_dataframe_artifact(run, f"{model_input_name}:{model_input_version}")
+    df = read_dataframe_artifact(run, **config['artifacts']['model_input'])
 
     logger.info("Predict.")
     df['prediction'] = model.predict(df)
     df['model_version'] = model_artifact.version
 
     logger.info("Log predictions.")
-    log_dataframe(
-        run=run,
-        df=df,
-        type=config['artifacts']['predictions']['type'],
-        name=config['artifacts']['predictions']['name'],
-        descr="Batch predictions and features.",
-    )
+    log_dataframe(run=run, df=df, **config['artifacts']['predictions'])
 
 
 if __name__ == '__main__':

@@ -9,30 +9,14 @@ import wandb
 
 from src.logger import logger
 from src.models.evaluation import RegressionEvaluation
-from src.utils import read_dataframe_artifact
-
-
-class ModelDoesNoteExistError(Exception):
-    pass
-
-
-def get_model_artifact(project_name, model_name, model_version):
-    api = wandb.Api()
-    try:
-        return api.artifact(f"{project_name}/{model_name}:{model_version}")
-    except wandb.errors.CommError as e:
-        raise ModelDoesNoteExistError(f"Trained model version does not exist. From WANDB: {e}")
+from src.utils import read_dataframe_artifact, get_model_artifact
+from src.exceptions import ArtifactDoesNoteExistError
 
 
 def promote_model(project_name, model_name, model_version):
-    api = wandb.Api()
-    try:
-        artifact = api.artifact(f"{project_name}/{model_name}:{model_version}")
-    except wandb.errors.CommError as e:
-        raise ModelDoesNoteExistError(f"Trained model version does not exist. From WANDB: {e}")
-
-    artifact.aliases.append('prod')
-    artifact.save()
+    model_artifact = get_model_artifact(project_name, model_name, model_version)
+    model_artifact.aliases.append('prod')
+    model_artifact.save()
 
 
 @hydra.main(config_path="../../conf", config_name="config")
@@ -46,7 +30,8 @@ def main(config):
     logger.info("Load hold out test data.")
     test_data = read_dataframe_artifact(
         run=run,
-        artifact_tag=f"{config['artifacts']['test_data']['name']}:latest"
+        name=config['artifacts']['test_data']['name'],
+        version = "latest"
     )
 
     logger.info("Loading latest trained model.")
@@ -66,11 +51,12 @@ def main(config):
         )
 
         return
+
     run.use_artifact(latest_model_artifact)
     latest_model_path = latest_model_artifact.file()
     latest_model = joblib.load(latest_model_path)
 
-    logger.info("Predictimng on hold out test set to get model performance of latest trained model.")
+    logger.info("Predicting on hold out test set to get model performance of latest trained model.")
     predictions = latest_model.predict(test_data)
     evaluation = RegressionEvaluation(
         y_true=test_data[config["main"]["target_column"]],
@@ -101,10 +87,7 @@ def main(config):
             model_name=config['artifacts']['model']['name'],
             model_version="prod"
         )
-        run.use_artifact(current_prod_model_artifact)
-        current_prod_model_path = current_prod_model_artifact.file()
-        current_prod_model = joblib.load(current_prod_model_path)
-    except ModelDoesNoteExistError:
+    except ArtifactDoesNoteExistError:
         logger.info("No current production model. Promoting model without comparing.")
         promote_model(
             project_name=config["main"]["project_name"],
@@ -112,6 +95,10 @@ def main(config):
             model_version="latest"
         )
         return
+
+    run.use_artifact(current_prod_model_artifact)
+    latest_model_path = current_prod_model_artifact.file()
+    current_prod_model = joblib.load(latest_model_path)
 
     logger.info("Predicting on hold out test set to get model performance of current prod model.")
     predictions_prod = current_prod_model.predict(test_data)

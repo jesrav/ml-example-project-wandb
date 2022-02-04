@@ -1,0 +1,2 @@
+class ArtifactDoesNoteExistError(Exception):
+    pass

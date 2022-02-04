@@ -26,9 +26,7 @@ def train_evaluate(
     target_column = config["main"]["target_column"]
 
     logger.info("Load data fro training model.")
-    train_data_name = config["artifacts"]["train_validate_data"]["name"]
-    train_data_version = config["artifacts"]["train_validate_data"]["version"]
-    df = read_dataframe_artifact(run, f"{train_data_name}:{train_data_version}")
+    df = read_dataframe_artifact(run, **config["artifacts"]["train_validate_data"])
 
     logger.info("Initialize ml pipeline object.")
     pipeline = pipeline_class.get_pipeline(**(config["model"]["params"]))
@@ -59,25 +57,13 @@ def train_evaluate(
     with TemporaryDirectory() as tmpdirname:
         model_evaluation.save_evaluation_artifacts(out_dir=tmpdirname)
         pipeline_class.save_fitted_pipeline_plots(pipeline, out_dir=tmpdirname)
-        log_dir(
-            run=run,
-            dir_path=tmpdirname,
-            type=config["artifacts"]["evaluation"]["type"],
-            name=config["artifacts"]["evaluation"]["name"],
-            descr=config["artifacts"]["evaluation"]["description"]
-        )
+        log_dir(run=run, dir_path=tmpdirname, **config["artifacts"]["evaluation"])
 
     logger.info("Logging model trained on all artifacts as an artifact.")
     with TemporaryDirectory() as tmpdirname:
         file_name = tmpdirname + "model.pickle"
         joblib.dump(pipeline, file_name)
-        log_file(
-           run=run,
-           file_path=file_name,
-            type=config["artifacts"]["model"]["type"],
-            name=config["artifacts"]["model"]["name"],
-            descr=config["artifacts"]["model"]["description"]
-        )
+        log_file(run=run, file_path=file_name, **config["artifacts"]["model"])
 
 
 @hydra.main(config_path="../../conf", config_name="config")
