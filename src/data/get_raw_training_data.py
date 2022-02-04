@@ -1,6 +1,7 @@
 """
 Module to get raw dataset and log it as a versioned artifact.
 """
+from builtins import breakpoint
 import hydra
 import wandb
 
@@ -22,9 +23,7 @@ def main(config):
         log_dataframe(
             run=run,
             df=df,
-            name=config["artifacts"]["raw_data"]["name"],
-            type=config["artifacts"]["raw_data"]["type"],
-            descr=config["artifacts"]["raw_data"]["description"],
+            **config["artifacts"]["raw_data"],
         )
 
 

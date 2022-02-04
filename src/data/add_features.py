@@ -29,21 +29,13 @@ def main(config):
                 group=config["main"]["experiment_name"]
         ) as run:
 
-        clean_data_name = config["artifacts"]["clean_data"]["name"]
-        clean_data_version = config["artifacts"]["clean_data"]["version"]
-        df = read_dataframe_artifact(run, f"{clean_data_name}:{clean_data_version}")
+        df = read_dataframe_artifact(run, **config["artifacts"]["clean_data"])
 
         logger.info('Add features.')
         df = add_features(df)
 
         logger.info('Log modelling input data artifact.')
-        log_dataframe(
-            run=run,
-            df=df,
-            name=config["artifacts"]["model_input"]["name"],
-            type=config["artifacts"]["model_input"]["type"],
-            descr=config["artifacts"]["model_input"]["description"],
-        )
+        log_dataframe(run=run, df=df, **config["artifacts"]["model_input"])
 
 
 if __name__ == "__main__":

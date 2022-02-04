@@ -19,13 +19,7 @@ def main(config):
         df = get_example_data(sample_size=1000)
 
         logger.info("Creating artifact")
-        log_dataframe(
-            run=run,
-            df=df,
-            name=config["artifacts"]["raw_data"]["name"],
-            type=config["artifacts"]["raw_data"]["type"],
-            descr=config["artifacts"]["raw_data"]["description"],
-        )
+        log_dataframe(run=run, df=df, **config["artifacts"]["raw_data"])
 
 
 if __name__ == "__main__":

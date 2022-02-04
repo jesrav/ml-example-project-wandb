@@ -5,11 +5,13 @@ import pandas as pd
 import wandb
 from sklearn.datasets import fetch_california_housing
 
+from src.exceptions import ArtifactDoesNoteExistError
 from src.logger import logger
 
 
-def get_example_data(sample_size: Optional[int] = None) -> pd.DataFrame:
+def get_example_data(sample_size: Optional[int] = None, **kwargs) -> pd.DataFrame:
     """Get california housing data."""
+    _ = kwargs
     data = fetch_california_housing(as_frame=True)
     df = data.data
     df["median_house_price"] = data.target
@@ -18,10 +20,11 @@ def get_example_data(sample_size: Optional[int] = None) -> pd.DataFrame:
     return df
 
 
-def log_file(run, file_path: str, type: str, name: str, descr: Optional[str] = "") -> None:
+def log_file(run, file_path: str, type: str, name: str, description: Optional[str] = "", **kwargs) -> None:
+    _ = kwargs
     artifact = wandb.Artifact(
         type=type,
-        description=descr,
+        description=description,
         name=name,
     )
     artifact.add_file(file_path)
@@ -32,10 +35,11 @@ def log_file(run, file_path: str, type: str, name: str, descr: Optional[str] = "
     artifact.wait()
 
 
-def log_dir(run, dir_path: str, type: str, name: str, descr: Optional[str] = "") -> None:
+def log_dir(run, dir_path: str, type: str, name: str, description: Optional[str] = "", **kwargs) -> None:
+    _ = kwargs
     artifact = wandb.Artifact(
         type=type,
-        description=descr,
+        description=description,
         name=name,
     )
     artifact.add_dir(dir_path)
@@ -46,16 +50,29 @@ def log_dir(run, dir_path: str, type: str, name: str, descr: Optional[str] = "")
     artifact.wait()
 
 
-def log_dataframe(run, df: pd.DataFrame, type: str, name: str, descr: Optional[str] = "") -> None:
+def log_dataframe(run, df: pd.DataFrame, type: str, name: str, description: Optional[str] = "", **kwargs) -> None:
+    _ = kwargs
     with TemporaryDirectory() as tmpdirname:
         file_name = tmpdirname + "artifacts.parquet"
         df.to_parquet(file_name)
-        log_file(run, file_name, type, name, descr)
+        log_file(run, file_name, type, name, description)
 
 
-def read_dataframe_artifact(run, artifact_tag):
+def read_dataframe_artifact(run, name: str, version: str, **kwargs) -> pd.DataFrame:
+    artifact_tag = f"{name}:{version}"
+    _ = kwargs
     logger.info(f"Downloading artifact {artifact_tag}")
-    artifact = run.use_artifact(artifact_tag)
+    try:
+        artifact = run.use_artifact(artifact_tag)
+    except wandb.errors.CommError as e:
+        ArtifactDoesNoteExistError(f"Data version does not exist. From WANDB: {e}")
     artifact_path = artifact.file()
     return pd.read_parquet(artifact_path)
 
+
+def get_model_artifact(project_name: str, model_name: str, model_version: str):
+    api = wandb.Api()
+    try:
+        return api.artifact(f"{project_name}/{model_name}:{model_version}")
+    except wandb.errors.CommError as e:
+        raise ArtifactDoesNoteExistError(f"Trained model version does not exist. From WANDB: {e}")
