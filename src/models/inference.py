@@ -18,7 +18,7 @@ def main(config):
     logger.info("Load model.")
     model_artifact = get_model_artifact(
         config["main"]["project_name"], 
-        config['artifacts']['model'],
+        config['artifacts']['model']["name"],
         config['artifacts']['model']['version']
     )
     run.use_artifact(model_artifact)
