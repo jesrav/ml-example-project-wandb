@@ -3,21 +3,9 @@ from typing import Optional
 
 import pandas as pd
 import wandb
-from sklearn.datasets import fetch_california_housing
 
 from src.exceptions import ArtifactDoesNoteExistError
 from src.logger import logger
-
-
-def get_example_data(sample_size: Optional[int] = None, **kwargs) -> pd.DataFrame:
-    """Get california housing data."""
-    _ = kwargs
-    data = fetch_california_housing(as_frame=True)
-    df = data.data
-    df["median_house_price"] = data.target
-    if sample_size:
-        return df.sample(sample_size)
-    return df
 
 
 def log_file(run, file_path: str, type: str, name: str, description: Optional[str] = "", **kwargs) -> None:
