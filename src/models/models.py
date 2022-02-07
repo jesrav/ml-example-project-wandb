@@ -15,7 +15,7 @@ import pandera as pa
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from src.models.custom_transfomer_classes import DataFrameValidatior, ColumnSelector
+from src.models.custom_transfomer_classes import ColumnSelector
 
 
 class BasePipelineConfig(ABC):
@@ -59,20 +59,9 @@ class RidgePipelineConfig(BasePipelineConfig):
             'avg_bedrooms_per_room',
         ]
 
-        schema_prediction_data = pa.DataFrameSchema({
-            "MedInc": pa.Column(float, nullable=False, required=True),
-            "HouseAge": pa.Column(float, nullable=False, required=True),
-            "AveRooms": pa.Column(float, nullable=False, required=True),
-            "Population": pa.Column(float, nullable=False, required=True),
-            "AveOccup": pa.Column(float, nullable=False, required=True),
-            "Latitude": pa.Column(float, nullable=False, required=True),
-            "Longitude": pa.Column(float, nullable=False, required=True),
-        })
-
         # Define pipeline
         vanilla_pipeline = Pipeline([
             ("column_selector", ColumnSelector(features)),
-            ("column_validator", DataFrameValidatior(pandera_schema=schema_prediction_data)),
             ("regressor", Ridge()
              )
         ])
@@ -106,20 +95,9 @@ class RandomForestPipelineConfig(BasePipelineConfig):
             'avg_bedrooms_per_room',
         ]
 
-        schema_prediction_data = pa.DataFrameSchema({
-            "MedInc": pa.Column(float, nullable=False, required=True),
-            "HouseAge": pa.Column(float, nullable=False, required=True),
-            "AveRooms": pa.Column(float, nullable=False, required=True),
-            "Population": pa.Column(float, nullable=False, required=True),
-            "AveOccup": pa.Column(float, nullable=False, required=True),
-            "Latitude": pa.Column(float, nullable=False, required=True),
-            "Longitude": pa.Column(float, nullable=False, required=True),
-        })
-
         # Define pipeline
         vanilla_pipeline = Pipeline([
             ("column_selector", ColumnSelector(features)),
-            ("column_validator", DataFrameValidatior(pandera_schema=schema_prediction_data)),
             ("regressor", RandomForestRegressor()
              )
         ])
