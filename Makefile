@@ -5,7 +5,7 @@ train_pipeline: get_raw_data_train preprocess_data_train add_features_train
 train_pipeline: data_segregation train_random_forest test_and_promote_model
 
 get_raw_data_train:
-	python src/data/get_raw_training_data.py main=training-pipeline artifacts=training-pipeline
+	python src/data/get_raw_data.py main=training-pipeline artifacts=training-pipeline
 
 preprocess_data_train:
 	python src/data/process_data.py main=training-pipeline artifacts=training-pipeline
@@ -40,7 +40,7 @@ inference_pipeline: get_raw_data_inference preprocess_data_inference add_feature
 inference_pipeline: batch_inference
 
 get_raw_data_inference:
-	python src/data/get_raw_inference_data.py main=inference-pipeline artifacts=inference-pipeline
+	python src/data/get_raw_data.py main=inference-pipeline artifacts=inference-pipeline
 
 preprocess_data_inference:
 	python src/data/process_data.py main=inference-pipeline artifacts=inference-pipeline

@@ -1,7 +1,6 @@
 """
 Module to get raw dataset and log it as a versioned artifact.
 """
-from builtins import breakpoint
 import hydra
 import wandb
 
@@ -16,15 +15,11 @@ def main(config):
             job_type="get-raw-data",
             group=config["main"]["experiment_name"]
     ) as run:
-        logger.info("Get raw training data")
-        df = get_example_data()
-
+        logger.info("Get sample inference data.")
+        df = get_example_data(sample_size=config["main"].get("inference_sample_size", None))
+        
         logger.info("Creating artifact")
-        log_dataframe(
-            run=run,
-            df=df,
-            **config["artifacts"]["raw_data"],
-        )
+        log_dataframe(run=run, df=df, **config["artifacts"]["raw_data"])
 
 
 if __name__ == "__main__":

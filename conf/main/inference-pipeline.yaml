@@ -1,2 +1,3 @@
 project_name: housing-model
 experiment_name: inference-pipeline
+inference_sample_size: 1000
