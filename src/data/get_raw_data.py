@@ -22,7 +22,8 @@ def get_raw_data(
     data = fetch_california_housing(as_frame=True)
     df = data.data
     df["median_house_price"] = data.target
-    df["MedInc"] = df["MedInc"] * (1 + med_inc_mean_drift_percentage)
+    if med_inc_mean_drift_percentage:
+        df["MedInc"] = df["MedInc"] * (1 + med_inc_mean_drift_percentage)
     if sample_size:
         return df.sample(sample_size)
     return df
