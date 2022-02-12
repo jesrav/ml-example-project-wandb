@@ -38,7 +38,7 @@ class LoadedModel:
     @classmethod
     def from_wandb_artifact(cls, wandb_artifact: wandb.Artifact):
         model_path = wandb_artifact.download()
-        model = mlflow.pyfunc.load_model("file:" + model_path + "/model")
+        model = mlflow.pyfunc.load_model(f'file:{model_path}/model')
 
         model_meta_data = ModelMetaData(
             model_id=wandb_artifact.id,

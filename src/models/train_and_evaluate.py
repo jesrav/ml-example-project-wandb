@@ -68,10 +68,11 @@ def train_evaluate(
     with TemporaryDirectory() as tmpdirname:
         mlflow.pyfunc.save_model(
             python_model=MLFlowModelWrapper(pipeline),
-            path=tmpdirname + "/model",
+            path=f'{tmpdirname}/model',
             conda_env=pipeline_class.get_conda_env(),
             code_path=["src"],
         )
+
         log_dir(run=run, dir_path=tmpdirname, **config["artifacts"]["model"])
 
 

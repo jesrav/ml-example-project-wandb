@@ -77,7 +77,7 @@ def main(config):
         current_data=inference_data
     )
     with TemporaryDirectory() as tmpdirname:
-        data_drift_profile_file_name = tmpdirname + "data_drift_profile.json"
+        data_drift_profile_file_name = f'{tmpdirname}data_drift_profile.json'
         with open(data_drift_profile_file_name, "w") as file:
             file.write(data_drift_profile.json())
         log_file(
