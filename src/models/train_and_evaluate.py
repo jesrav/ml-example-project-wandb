@@ -9,13 +9,14 @@ import hydra
 
 from src.models.evaluation import RegressionEvaluation
 from src.models import model_pipeliene_configs
+from src.models.model_pipeliene_configs import BasePipelineConfig
 from src.utils.artifacts import read_dataframe_artifact, log_dir, log_file
 
 logger = logging.getLogger(__name__)
 
 
 def train_evaluate(
-    pipeline_class: Type[models.BasePipelineConfig],
+    pipeline_class: Type[BasePipelineConfig],
     config: dict,
 ):
     run = wandb.init(

@@ -33,6 +33,8 @@ def get_raw_data(
 
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
+    from hydra.core.hydra_config import HydraConfig
+    print(HydraConfig.get())
     with wandb.init(
             project=config["main"]["project_name"],
             job_type="get-raw-data",
