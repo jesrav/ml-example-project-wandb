@@ -13,14 +13,63 @@ from src.utils import read_dataframe_artifact, get_model_artifact
 from src.exceptions import ArtifactDoesNoteExistError
 
 
+class TestModel:
+
+    def __init__(self, model, test_data, target_col, max_mae):
+        self.model = model
+        self.test_data = test_data
+        self.target_col = target_col
+        self.max_mae = max_mae
+        self.model_mae = self._calc_model_mae(model, test_data, target_col)
+
+    def _calc_model_mae(self, model, test_data, target_col):
+        predictions = model.predict(test_data)
+        evaluation = RegressionEvaluation(
+            y_true=test_data[target_col],
+            y_pred=predictions
+        )
+        self.model_mae = evaluation.get_metrics()["mae"]
+
+    def _model_has_ok_mae(self) -> bool:
+        return self.model_mae < self.max_mae
+
+    def _model_edge_cases_ok(self) -> bool:
+        return True
+
+    @property
+    def model_passes_tests(self) -> bool:
+        return all([
+            self._model_has_ok_mae(), self._model_edge_cases_ok()
+        ])
+
+    @@property
+    def message(self):
+        if self._model_has_ok_mae:
+            mae_message = (
+                f"Model has MAE of {self.model_mae}, which is under the max threshold of {self.max_mae}"
+            )
+        else:
+            mae_message = (
+                f"Model has MAE of {self.model_mae}, which is not below the max threshold of {self.max_mae}"
+            )
+        edge_case_message = (
+            "Model passes all edge cases" if self._model_edge_cases_ok else "Model does not pass all edge cases"
+        return f"{mae_message}. {edge_case_message}"
+
+
 class PromoteModel:
 
-    def __init__(self, model_challenger, model_current, test_data):
+    def __init__(
+            self,
+            model_challenger,
+            model_current,
+            test_data,
+            single_model_test_class,
+            model_comparisson_class,
+    ):
         self.model_challenger = model_challenger
         self.model_current = model_current
         self.test_data = test_data
-
-    def test_model_mae(self):
 
 
 def promote_model(project_name, model_name, model_version):
