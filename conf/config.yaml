@@ -22,7 +22,5 @@ hydra:
         class: logging.FileHandler
         formatter: simple
         filename: .logs/${hydra.job.name}.log
-    root:
-      handlers: [ console ]
 
     disable_existing_loggers: false

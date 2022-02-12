@@ -22,6 +22,7 @@ class MLFlowModelWrapper(mlflow.pyfunc.PythonModel):
 class ModelMetaData:
     """Class for holding metadata on registered models."""
     model_id: str
+    version: str
     run_id: str
 
 
@@ -31,16 +32,17 @@ class LoadedModel:
     on the registered model.
     """
     model: mlflow.pyfunc.PyFuncModel
-    model_meta_data = ModelMetaData
+    model_meta_data: ModelMetaData
     wandb_artifact: wandb.Artifact
 
     @classmethod
     def from_wandb_artifact(cls, wandb_artifact: wandb.Artifact):
-        model_path = wandb_artifact.file()
-        model = mlflow.pyfunc.load_model("file:" + model_path)
+        model_path = wandb_artifact.download()
+        model = mlflow.pyfunc.load_model("file:" + model_path + "/model")
 
         model_meta_data = ModelMetaData(
             model_id=wandb_artifact.id,
+            version=wandb_artifact.version,
             run_id=wandb_artifact.logged_by(),
         )
         return LoadedModel(

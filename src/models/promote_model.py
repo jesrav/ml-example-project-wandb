@@ -16,12 +16,12 @@ from src.exceptions import ArtifactDoesNoteExistError
 logger = logging.getLogger(__name__)
 
 
-def log_promotion_status(model_id: str, additional_info: str, model_to_be_promoted: bool) -> None:
+def log_promotion_status(model_version: str, additional_info: str, model_to_be_promoted: bool) -> None:
     if model_to_be_promoted:
-        message = f"Trained model with id {model_id} promoted."
+        message = f"Trained model version {model_version} promoted."
         logger.info(
-            f"{message}"
-            f"{additional_info}."
+            f"{message} "
+            f"{additional_info}"
         )
         wandb.alert(
             title=message,
@@ -29,10 +29,10 @@ def log_promotion_status(model_id: str, additional_info: str, model_to_be_promot
             level=wandb.AlertLevel.INFO,
         )
     else:
-        message = f"Trained model with id {model_id} not promoted."
+        message = f"Trained model with version {model_version} not promoted."
         logger.warning(
-            f"{message}"
-            f"{additional_info}."
+            f"{message} "
+            f"{additional_info}"
         )
         wandb.alert(
             title=message,
@@ -75,14 +75,14 @@ class SingleModelTest:
     def message(self):
         if self._model_has_ok_mae:
             mae_message = (
-                f"Model has MAE of {self.model_mae}, which is under the max threshold of {self.max_mae}"
+                f"The model has MAE of {self.model_mae}, which is under the max threshold of {self.max_mae}"
             )
         else:
             mae_message = (
-                f"Model has MAE of {self.model_mae}, which is not below the max threshold of {self.max_mae}"
+                f"The model has MAE of {self.model_mae}, which is not below the max threshold of {self.max_mae}"
             )
         edge_case_message = (
-            "Model passes all edge cases" if self._model_edge_cases_ok else "Model does not pass all edge cases"
+            "The model passes all edge cases" if self._model_edge_cases_ok else "The model does not pass all edge cases"
         )
         return f"{mae_message}. {edge_case_message}."
 
@@ -136,7 +136,7 @@ def main(config):
     test_data = read_dataframe_artifact(
         run=run,
         name=config['artifacts']['test_data']['name'],
-        version = "latest"
+        version="latest"
     )
 
     logger.info("Loading latest trained model.")
@@ -175,9 +175,9 @@ def main(config):
             loaded_model_challenger.promote_to_prod()
 
         log_promotion_status(
-            model_id=loaded_model_challenger.model_meta_data.model_id,
+            model_version=loaded_model_challenger.model_meta_data.version,
             additional_info=(
-                f"{single_model_test.message}."
+                f"{single_model_test.message}"
             ),
             model_to_be_promoted=model_to_be_promoted
         )
@@ -199,10 +199,10 @@ def main(config):
             loaded_model_challenger.promote_to_prod()
 
         log_promotion_status(
-            model_id=loaded_model_challenger.model_meta_data.model_id,
+            model_version=loaded_model_challenger.model_meta_data.version,
             additional_info=(
-                f"{single_model_test.message}."
-                f"{challenger_model_test.message}."
+                f"{single_model_test.message}"
+                f"{challenger_model_test.message}"
             ),
             model_to_be_promoted=model_to_be_promoted
         )
