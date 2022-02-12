@@ -11,7 +11,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import RandomForestRegressor
 import pandas as pd
-import pandera as pa
 import seaborn as sns
 from matplotlib import pyplot as plt
 

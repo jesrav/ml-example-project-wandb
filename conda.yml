@@ -14,8 +14,9 @@ dependencies:
   - pyarrow
   - seaborn
   - pandera
-  - hydra-core
   - wandb
+  - mlflow
   - pip:
     - python-dotenv
     - evidently
+    - hydra-core==1.0
