@@ -4,14 +4,38 @@ Script for promoting latest trained model to production if the performance on a 
 - is better than the current production model.
 """
 import hydra
-import joblib
 import wandb
 
 from src.logger import logger
 from src.models.evaluation import RegressionEvaluation
-from src.utils import read_dataframe_artifact, get_model_artifact
+from src.utils import read_dataframe_artifact
 from src.exceptions import ArtifactDoesNoteExistError
-from src.models.utils import get_model
+from src.models.utils import get_model, LoadedModel
+
+
+def log_promotion_status(model_id: str, additional_info: str, model_to_be_promoted: bool) -> None:
+    if model_to_be_promoted:
+        message = f"Trained model with id {model_id} promoted."
+        logger.info(
+            f"{message}"
+            f"{additional_info}."
+        )
+        wandb.alert(
+            title=message,
+            text=additional_info,
+            level=wandb.AlertLevel.INFO,
+        )
+    else:
+        message = f"Trained model with id {model_id} not promoted."
+        logger.warning(
+            f"{message}"
+            f"{additional_info}."
+        )
+        wandb.alert(
+            title=message,
+            text=additional_info,
+            level=wandb.AlertLevel.WARN,
+        )
 
 
 class SingleModelTest:
@@ -96,27 +120,6 @@ class ChallengerModelTest:
 
         return f"{mae_message}."
 
-#
-# class PromoteModel:
-#
-#     def __init__(
-#             self,
-#             model_challenger,
-#             model_current,
-#             test_data,
-#             single_model_test_class,
-#             model_comparisson_class,
-#     ):
-#         self.model_challenger = model_challenger
-#         self.model_current = model_current
-#         self.test_data = test_data
-
-
-# def promote_model(project_name, model_name, model_version):
-#     model_artifact = get_model_artifact(project_name, model_name, model_version)
-#     model_artifact.aliases.append('prod')
-#     model_artifact.save()
-
 
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
@@ -163,8 +166,20 @@ def main(config):
         max_mae=config["main"]["max_mae_to_promote"]
     )
 
-    if loaded_model_current:
-        logger.info("Running challenger tests.")
+    if not loaded_model_current:
+        model_to_be_promoted = single_model_test.model_passes_tests
+        if model_to_be_promoted:
+            loaded_model_challenger.promote_to_prod()
+
+        log_promotion_status(
+            model_id=loaded_model_challenger.model_meta_data.model_id,
+            additional_info=(
+                f"{single_model_test.message}."
+            ),
+            model_to_be_promoted=model_to_be_promoted
+        )
+    else:
+        logger.info("Running model challenger comparison tests.")
         run.use_artifact(loaded_model_current.wandb_artifact)
         challenger_model_test = ChallengerModelTest(
             model_challenger=loaded_model_challenger.model,
@@ -173,61 +188,20 @@ def main(config):
             target_col=config["main"]["target_column"],
         )
 
-    if not single_model_test.model_passes_tests:
-        logger.warning(
-            f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} not promoted. "
-            f"{single_model_test.message}"
+        model_to_be_promoted = (
+                single_model_test.model_passes_tests
+                and challenger_model_test.challenger_model_is_better
         )
-        wandb.alert(
-            title=f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} not promoted.",
-            text=single_model_test.message,
-            level=wandb.AlertLevel.WARN,
-        )
+        if model_to_be_promoted:
+            loaded_model_challenger.promote_to_prod()
 
-    elif single_model_test.model_passes_tests and not loaded_model_current:
-        logger.info(
-            f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} promoted."
-            f"{single_model_test.message}"
-            f"No model currently in production to compare against."
-        )
-        wandb.alert(
-            title=f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} promoted.",
-            text=(
-                f"{single_model_test.message}."
-                f"No model currently in production to compare against."
-            ),
-            level=wandb.AlertLevel.INFO,
-        )
-        loaded_model_challenger.promote_to_prod()
-
-    elif single_model_test.model_passes_tests and challenger_model_test.challenger_model_is_better:
-        logger.info(
-            f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} promoted."
-            f"{single_model_test.message}."
-            f"{challenger_model_test.message}."
-        )
-        wandb.alert(
-            title=f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} promoted.",
-            text=(
+        log_promotion_status(
+            model_id=loaded_model_challenger.model_meta_data.model_id,
+            additional_info=(
                 f"{single_model_test.message}."
                 f"{challenger_model_test.message}."
             ),
-            level=wandb.AlertLevel.INFO,
-        )
-        loaded_model_challenger.promote_to_prod()
-    else:
-        logger.warning(
-            f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} not promoted."
-            f"{single_model_test.message}."
-            f"{challenger_model_test.message}."
-        )
-        wandb.alert(
-            title=f"Trained model with id {loaded_model_challenger.model_meta_data.model_id} not promoted.",
-            text=(
-                f"{single_model_test.message}."
-                f"{challenger_model_test.message}."
-            ),
-            level=wandb.AlertLevel.WARN,
+            model_to_be_promoted=model_to_be_promoted
         )
 
 
