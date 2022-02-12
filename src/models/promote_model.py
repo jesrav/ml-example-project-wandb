@@ -3,14 +3,17 @@ Script for promoting latest trained model to production if the performance on a 
 - is better than a fixed threshold.
 - is better than the current production model.
 """
+import logging
+
 import hydra
 import wandb
 
-from src.logger import logger
 from src.models.evaluation import RegressionEvaluation
-from src.utils import read_dataframe_artifact
+from src.utils.artifacts import read_dataframe_artifact
+from src.utils.models import get_model
 from src.exceptions import ArtifactDoesNoteExistError
-from src.models.utils import get_model
+
+logger = logging.getLogger(__name__)
 
 
 def log_promotion_status(model_id: str, additional_info: str, model_to_be_promoted: bool) -> None:

@@ -5,16 +5,16 @@ train_pipeline: get_raw_data_train preprocess_data_train add_features_train vali
 train_pipeline: data_segregation train_random_forest test_and_promote_model
 
 get_raw_data_train:
-	python src/data/get_raw_data.py main=training-pipeline artifacts=training-pipeline
+	python src/data/get_raw_data.py
 
 preprocess_data_train:
-	python src/data/process_data.py main=training-pipeline artifacts=training-pipeline
+	python src/data/process_data.py
 
 add_features_train:
-	python src/data/add_features.py main=training-pipeline artifacts=training-pipeline
+	python src/data/add_features.py
 
 validate_model_input_train:
-	python src/data/validate_data.py main=training-pipeline artifacts=training-pipeline
+	python src/data/validate_data.py
 
 data_segregation:
 	python src/data/data_segregation.py
@@ -26,7 +26,7 @@ train_random_forest:
 	python src/models/train_and_evaluate.py model=random_forest
 
 test_and_promote_model:
-	python src/models/promote_model.py main=training-pipeline artifacts=training-pipeline
+	python src/models/promote_model.py
 
 
 ###############################################################

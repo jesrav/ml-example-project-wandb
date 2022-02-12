@@ -1,5 +1,6 @@
 from tempfile import TemporaryDirectory
 from typing import Type
+import logging
 
 import joblib
 from sklearn.model_selection import cross_val_predict
@@ -7,9 +8,10 @@ import wandb
 import hydra
 
 from src.models.evaluation import RegressionEvaluation
-from src.models import models
-from src.utils import read_dataframe_artifact, log_dir, log_file
-from src.logger import logger
+from src.models import model_pipeliene_configs
+from src.utils.artifacts import read_dataframe_artifact, log_dir, log_file
+
+logger = logging.getLogger(__name__)
 
 
 def train_evaluate(
@@ -68,7 +70,7 @@ def train_evaluate(
 
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
-    model_class = getattr(models, config["model"]["ml_pipeline_config"])
+    model_class = getattr(model_pipeliene_configs, config["model"]["ml_pipeline_config"])
     train_evaluate(
         pipeline_class=model_class,
         config=config,

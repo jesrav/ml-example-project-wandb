@@ -1,3 +1,4 @@
+# @package _group_
 ml_pipeline_config: RidgePipelineConfig
 params:
   regressor__alpha: 2

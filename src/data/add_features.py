@@ -1,12 +1,15 @@
 """
 Module to add features.
 """
+import logging
+
 import hydra
 import pandas as pd
 import wandb
 
-from src.logger import logger
-from src.utils import read_dataframe_artifact, log_dataframe
+from src.utils.artifacts import read_dataframe_artifact, log_dataframe
+
+logger = logging.getLogger(__name__)
 
 
 def add_bedrooms_per_room(df: pd.DataFrame) -> pd.DataFrame:

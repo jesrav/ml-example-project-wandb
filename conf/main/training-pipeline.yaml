@@ -1,3 +1,4 @@
+# @package _group_
 project_name: housing-model
 experiment_name: training-pipeline
 target_column: "median_house_price"

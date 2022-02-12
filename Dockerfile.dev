@@ -6,7 +6,7 @@ WORKDIR /mlops-example
 COPY conda.yml .
 RUN conda env create -f conda.yml
 
-# Copy project
+# Copy main
 COPY src ./src
 COPY conf ./conf
 COPY setup.py .
@@ -17,6 +17,6 @@ COPY Makefile .
 RUN echo "conda activate ml-example-project-wandb" >> ~/.bashrc
 SHELL ["/bin/bash", "--login", "-c"]
 
-# Install project
-RUN conda activate ml-example-project-wandb
+# Install main
+RUN conda activate ml-example-main-wandb
 RUN pip install -e .

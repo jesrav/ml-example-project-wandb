@@ -1,5 +1,11 @@
 defaults:
   - main: training-pipeline
-  - model: ridge
-  - evaluation: default
+  - model: random_forest
+  - evaluation: training-pipeline
   - artifacts: training-pipeline
+  - override /hydra/job_logging: null
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .

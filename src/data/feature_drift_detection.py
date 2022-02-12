@@ -1,8 +1,8 @@
 """
 Module for doing drift detection
 """
-from curses.panel import version
 from tempfile import TemporaryDirectory
+import logging
 
 import hydra
 import pandas as pd
@@ -13,8 +13,9 @@ from evidently.dashboard.tabs import DataDriftTab
 from evidently.model_profile.sections import DataDriftProfileSection
 from evidently.model_profile import Profile
 
-from src.logger import logger
-from src.utils import read_dataframe_artifact, log_file
+from src.utils.artifacts import read_dataframe_artifact, log_file
+
+logger = logging.getLogger(__name__)
 
 
 def get_model_training_data(run, project_name, model_name, model_version) -> pd.DataFrame:

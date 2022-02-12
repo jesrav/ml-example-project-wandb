@@ -1,3 +1,4 @@
+import logging
 from tempfile import TemporaryDirectory
 from typing import Optional
 
@@ -5,7 +6,9 @@ import pandas as pd
 import wandb
 
 from src.exceptions import ArtifactDoesNoteExistError
-from src.logger import logger
+
+
+logger = logging.getLogger(__name__)
 
 
 def log_file(run, file_path: str, type: str, name: str, description: Optional[str] = "", **kwargs) -> None:

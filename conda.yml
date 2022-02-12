@@ -1,4 +1,4 @@
-name: ml-example-project-wandb
+name: ml-example-main-wandb
 channels:
   - conda-forge
   - defaults
