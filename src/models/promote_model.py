@@ -56,9 +56,10 @@ def main(config):
         )
         wandb.alert(
             title='Model not promoted.',
-            text=f'Latest model is already the production model. No new model to promote',
+            text='Latest model is already the production model. No new model to promote',
             level=wandb.AlertLevel.WARN,
         )
+
 
         return
 
