@@ -13,6 +13,16 @@ from src.utils import read_dataframe_artifact, get_model_artifact
 from src.exceptions import ArtifactDoesNoteExistError
 
 
+class PromoteModel:
+
+    def __init__(self, model_challenger, model_current, test_data):
+        self.model_challenger = model_challenger
+        self.model_current = model_current
+        self.test_data = test_data
+
+    def test_model_mae(self):
+
+
 def promote_model(project_name, model_name, model_version):
     model_artifact = get_model_artifact(project_name, model_name, model_version)
     model_artifact.aliases.append('prod')

@@ -66,3 +66,14 @@ sweep_ridge:
 
 sweep_random_forest:
 	wandb sweep conf/wandb_sweeps/random_forest.yaml
+
+
+###############################################################
+# Utils
+###############################################################
+build:
+	docker build -t ml-example-project-wandb -f Dockerfile.dev .
+
+interactive_container:
+	docker run -it -v $(pwd):/mlops-example ml-example-project-wandb
+

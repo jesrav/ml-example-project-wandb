@@ -1,0 +1,20 @@
+FROM continuumio/miniconda3
+
+WORKDIR /mlops-example
+
+# Create the environment:
+COPY conda.yml .
+RUN conda env create -f conda.yml
+
+# Copy project
+COPY src ./src
+COPY setup.py .
+COPY Makefile .
+
+# Make sure the conda environment is activated when running a container
+RUN echo "conda activate ml-example-project-wandb" >> ~/.bashrc
+SHELL ["/bin/bash", "--login", "-c"]
+
+# Install project
+RUN conda activate ml-example-project-wandb
+RUN pip install -e .
