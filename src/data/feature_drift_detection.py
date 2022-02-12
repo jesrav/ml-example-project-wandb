@@ -62,7 +62,7 @@ def main(config):
         current_data=inference_data
     )
     with TemporaryDirectory() as tmpdirname:
-        data_drift_report_file_name = tmpdirname + "data_drift_report.html"
+        data_drift_report_file_name = f'{tmpdirname}data_drift_report.html'
         data_drift_report.save(data_drift_report_file_name)
         log_file(
             run=run,
