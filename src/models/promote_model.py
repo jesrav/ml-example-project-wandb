@@ -109,6 +109,7 @@ class ChallengerModelTest:
     def challenger_model_is_better(self) -> bool:
         return self.model_challenger_mae < self.model_current_mae
 
+    @property
     def message(self):
         if self.challenger_model_is_better:
             mae_message = (
@@ -201,7 +202,7 @@ def main(config):
         log_promotion_status(
             model_version=loaded_model_challenger.model_meta_data.version,
             additional_info=(
-                f"{single_model_test.message}"
+                f"{single_model_test.message} "
                 f"{challenger_model_test.message}"
             ),
             model_to_be_promoted=model_to_be_promoted
