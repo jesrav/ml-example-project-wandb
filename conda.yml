@@ -1,4 +1,4 @@
-name: ml-example-project-wandb
+name: ml-example-main-wandb
 channels:
   - conda-forge
   - defaults
@@ -13,11 +13,10 @@ dependencies:
   - jupyter
   - pyarrow
   - seaborn
+  - pandera
+  - wandb
+  - mlflow
   - pip:
-    - click
     - python-dotenv
-    - rich
-    - pandera
     - evidently
-    - wandb
-    - hydra-core
+    - hydra-core==1.0

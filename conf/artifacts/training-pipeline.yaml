@@ -1,3 +1,4 @@
+# @package _group_
 raw_data:
   name: raw_training_data
   type: raw_data

@@ -1,11 +1,14 @@
 """Module to validate model input data."""
+import logging
+
 import hydra
 import pandas as pd
 import pandera as pa
 import wandb
 
-from src.utils import log_dataframe, read_dataframe_artifact
-from src.logger import logger
+from src.utils.artifacts import read_dataframe_artifact
+
+logger = logging.getLogger(__name__)
 
 
 def validate_model_input(df: pd.DataFrame) -> pd.DataFrame:

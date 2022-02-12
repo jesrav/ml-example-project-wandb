@@ -2,14 +2,16 @@
 Module to get raw dataset.
 """
 from typing import Optional
+import logging
 
 import hydra
 import wandb
 from sklearn.datasets import fetch_california_housing
 import pandas as pd
 
-from src.utils import log_dataframe
-from src.logger import logger
+from src.utils.artifacts import log_dataframe
+
+logger = logging.getLogger(__name__)
 
 
 def get_raw_data(

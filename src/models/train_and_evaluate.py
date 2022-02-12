@@ -1,19 +1,24 @@
 from tempfile import TemporaryDirectory
 from typing import Type
+import logging
 
 import joblib
+import mlflow.pyfunc
 from sklearn.model_selection import cross_val_predict
 import wandb
 import hydra
 
 from src.models.evaluation import RegressionEvaluation
-from src.models import models
-from src.utils import read_dataframe_artifact, log_dir, log_file
-from src.logger import logger
+from src.models import model_pipeliene_configs
+from src.models.model_pipeliene_configs import BasePipelineConfig
+from src.utils.artifacts import read_dataframe_artifact, log_dir, log_file
+from src.utils.models import MLFlowModelWrapper
+
+logger = logging.getLogger(__name__)
 
 
 def train_evaluate(
-    pipeline_class: Type[models.BasePipelineConfig],
+    pipeline_class: Type[BasePipelineConfig],
     config: dict,
 ):
     run = wandb.init(
@@ -59,16 +64,21 @@ def train_evaluate(
         pipeline_class.save_fitted_pipeline_plots(pipeline, out_dir=tmpdirname)
         log_dir(run=run, dir_path=tmpdirname, **config["artifacts"]["evaluation"])
 
-    logger.info("Logging model trained on all artifacts as an artifact.")
+    logger.info("Logging model trained on all data as an artifact.")
     with TemporaryDirectory() as tmpdirname:
-        file_name = tmpdirname + "model.pickle"
-        joblib.dump(pipeline, file_name)
-        log_file(run=run, file_path=file_name, **config["artifacts"]["model"])
+        mlflow.pyfunc.save_model(
+            python_model=MLFlowModelWrapper(pipeline),
+            path=f'{tmpdirname}/model',
+            conda_env=pipeline_class.get_conda_env(),
+            code_path=["src"],
+        )
+
+        log_dir(run=run, dir_path=tmpdirname, **config["artifacts"]["model"])
 
 
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
-    model_class = getattr(models, config["model"]["ml_pipeline_config"])
+    model_class = getattr(model_pipeliene_configs, config["model"]["ml_pipeline_config"])
     train_evaluate(
         pipeline_class=model_class,
         config=config,

@@ -1,10 +1,14 @@
 """Module to do batch inference."""
+import logging
+
 import hydra
 import joblib
 import wandb
 
-from src.logger import logger
-from src.utils import read_dataframe_artifact, log_dataframe, get_model_artifact
+from src.utils.artifacts import read_dataframe_artifact, log_dataframe, get_model_artifact
+from src.utils.models import get_model
+
+logger = logging.getLogger(__name__)
 
 
 @hydra.main(config_path="../../conf", config_name="config")
@@ -16,21 +20,19 @@ def main(config):
     )
 
     logger.info("Load model.")
-    model_artifact = get_model_artifact(
-        config["main"]["project_name"], 
+    loaded_model = get_model(
+        config["main"]["project_name"],
         config['artifacts']['model']["name"],
         config['artifacts']['model']['version']
     )
-    run.use_artifact(model_artifact)
-    artifact_path = model_artifact.file()
-    model = joblib.load(artifact_path)
+    run.use_artifact(loaded_model.wandb_artifact)
 
     logger.info("Get model input.")
     df = read_dataframe_artifact(run, **config['artifacts']['model_input'])
 
     logger.info("Predict.")
-    df['prediction'] = model.predict(df)
-    df['model_version'] = model_artifact.version
+    df['prediction'] = loaded_model.model.predict(df)
+    df['model_version'] = loaded_model.model_meta_data.version
 
     logger.info("Log predictions.")
     log_dataframe(run=run, df=df, **config['artifacts']['predictions'])

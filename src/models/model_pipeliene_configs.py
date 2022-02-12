@@ -11,7 +11,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import RandomForestRegressor
 import pandas as pd
-import pandera as pa
 import seaborn as sns
 from matplotlib import pyplot as plt
 
@@ -28,6 +27,12 @@ class BasePipelineConfig(ABC):
         input:
             params: Parameters for sklearn compatible pipeline.
         """
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def get_conda_env() -> dict:
+        """Get conda environment spec"""
         pass
 
     @staticmethod
@@ -68,6 +73,24 @@ class RidgePipelineConfig(BasePipelineConfig):
         return deepcopy(vanilla_pipeline).set_params(**params)
 
     @staticmethod
+    def get_conda_env() -> dict:
+        """Get conda environment spec"""
+        return {
+            "channels": ["defaults"],
+            "dependencies": [
+                "python=3.9",
+                "scikit-learn==1.0.2",
+                "pip",
+                {
+                    "pip": [
+                        "mlflow==1.23.1",
+                    ],
+                },
+            ],
+            "name": "ridge-model-env",
+        }
+
+    @staticmethod
     def save_fitted_pipeline_plots(pipeline, out_dir: str):
         """Logreg pipeline does not have any plots for the fitted model."""
         pass
@@ -102,6 +125,24 @@ class RandomForestPipelineConfig(BasePipelineConfig):
              )
         ])
         return deepcopy(vanilla_pipeline).set_params(**params)
+
+    @staticmethod
+    def get_conda_env() -> dict:
+        """Get conda environment spec"""
+        return {
+            "channels": ["defaults"],
+            "dependencies": [
+                "python=3.9",
+                "scikit-learn1.0.2",
+                "pip",
+                {
+                    "pip": [
+                        "mlflow==1.23.1",
+                    ],
+                },
+            ],
+            "name": "random-forest-model-env",
+        }
 
     @staticmethod
     def save_fitted_pipeline_plots(pipeline, out_dir: str):

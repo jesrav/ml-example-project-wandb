@@ -1,12 +1,15 @@
 """
 Module to do preprocessing of artifacts.
 """
+import logging
+
 import hydra
 import pandas as pd
 import wandb
 
-from src.utils import log_dataframe, read_dataframe_artifact
-from src.logger import logger
+from src.utils.artifacts import log_dataframe, read_dataframe_artifact
+
+logger = logging.getLogger(__name__)
 
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
@@ -16,11 +19,10 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     with wandb.init(
-                project=config["main"]["project_name"],
-                job_type="process-data",
-                group=config["main"]["experiment_name"]
-        ) as run:
-
+            project=config["main"]["project_name"],
+            job_type="process-data",
+            group=config["main"]["experiment_name"]
+    ) as run:
         df = read_dataframe_artifact(run, **config["artifacts"]["raw_data"])
 
         logger.info('Preprocess raw artifacts.')

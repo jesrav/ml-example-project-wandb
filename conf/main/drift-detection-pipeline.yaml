@@ -1,2 +1,3 @@
+# @package _group_
 project_name: housing-model
 experiment_name: drift-detection-pipeline
