@@ -2,10 +2,9 @@
 import logging
 
 import hydra
-import joblib
 import wandb
 
-from src.utils.artifacts import read_dataframe_artifact, log_dataframe, get_model_artifact
+from src.utils.artifacts import read_dataframe_artifact, log_dataframe
 from src.utils.models import get_model
 
 logger = logging.getLogger(__name__)
