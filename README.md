@@ -1,13 +1,14 @@
 # MLOps batch example project, using WANDB
 Toy project, that implements passive retraining for a batch prediction regression use case.
 
-The project is not concerned with deployment or the actual ML models. It uses the Boston housing data and can be run locally.
+The project is not concerned with deployment or the development of the ML models. 
+It uses the Boston housing data and can be run locally.
 
 ## Tools used
-- Hydra for configuration 
-- Weights and Biases for experiment tracking and artifact versioning
-- MLFlow for model packaging
-- Evidently AI for drift detection
+- [Hydra](https://hydra.cc) for configuration 
+- [Weights and Biases](https://wandb.ai) for experiment tracking and artifact versioning
+- [MLFlow](https://mlflow.org) for model packaging
+- [Evidently AI](https://evidentlyai.com) for drift detection
 
 # Get started
 
