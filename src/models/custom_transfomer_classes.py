@@ -1,4 +1,6 @@
-"""Module that contains custom sklearn compatible transformer classes."""
+"""
+Module that contains custom sklearn compatible transformer classes.
+"""
 from typing import List
 
 import pandas as pd

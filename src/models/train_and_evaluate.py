@@ -1,8 +1,13 @@
+"""
+Module for training and evaluating a model.
+
+A model configuration that implements the interface found in
+src.models.model_pipeliene_configs.BasePipelineConfig is passed supplied through the Hyrda configuration.
+"""
 from tempfile import TemporaryDirectory
 from typing import Type
 import logging
 
-import joblib
 import mlflow.pyfunc
 from sklearn.model_selection import cross_val_predict
 import wandb
