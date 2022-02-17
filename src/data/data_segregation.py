@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     with wandb.init(
-            project=config["main"]["project_name"],
-            job_type="data_segregation",
-            group=config["main"]["experiment_name"]
+        project=config["main"]["project_name"],
+        job_type="data_segregation",
+        group=config["main"]["experiment_name"]
     ) as run:
         df = read_dataframe_artifact(run, **config["artifacts"]["model_input"])
 

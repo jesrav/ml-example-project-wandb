@@ -1,4 +1,6 @@
-"""Module to validate model input data."""
+"""
+Module to validate model input data.
+"""
 import logging
 
 import hydra
@@ -27,10 +29,10 @@ def validate_model_input(df: pd.DataFrame) -> pd.DataFrame:
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     with wandb.init(
-                project=config["main"]["project_name"],
-                job_type="validate-data",
-                group=config["main"]["experiment_name"]
-        ) as run:
+        project=config["main"]["project_name"],
+        job_type="validate-data",
+        group=config["main"]["experiment_name"]
+    ) as run:
 
         logger.info('Read model input data.')
         df = read_dataframe_artifact(run, **config["artifacts"]["model_input"])

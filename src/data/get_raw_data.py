@@ -34,9 +34,9 @@ def get_raw_data(
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     with wandb.init(
-            project=config["main"]["project_name"],
-            job_type="get-raw-data",
-            group=config["main"]["experiment_name"]
+        project=config["main"]["project_name"],
+        job_type="get-raw-data",
+        group=config["main"]["experiment_name"]
     ) as run:
         logger.info("Get sample inference data.")
         df = get_raw_data(

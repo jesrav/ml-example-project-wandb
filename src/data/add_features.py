@@ -27,9 +27,9 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
 @hydra.main(config_path="../../conf", config_name="config")
 def main(config):
     with wandb.init(
-                project=config["main"]["project_name"],
-                job_type="add_features",
-                group=config["main"]["experiment_name"]
+        project=config["main"]["project_name"],
+        job_type="add_features",
+        group=config["main"]["experiment_name"]
     ) as run:
 
         df = read_dataframe_artifact(run, **config["artifacts"]["clean_data"])
