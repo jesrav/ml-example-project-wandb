@@ -48,11 +48,11 @@ class SingleModelTest:
         self.test_data = test_data
         self.target_col = target_col
         self.max_mae = max_mae
-        self.model_mae = self._calc_model_mae(model, test_data, target_col)
+        self.predictions = model.predict(test_data)
+        self.model_mae = self._calc_model_mae(self.predictions, test_data, target_col)
 
     @staticmethod
-    def _calc_model_mae(model, test_data, target_col):
-        predictions = model.predict(test_data)
+    def _calc_model_mae(predictions, test_data, target_col):
         evaluation = RegressionEvaluation(
             y_true=test_data[target_col],
             y_pred=predictions
@@ -62,13 +62,13 @@ class SingleModelTest:
     def _model_has_ok_mae(self) -> bool:
         return self.model_mae < self.max_mae
 
-    def _model_edge_cases_ok(self) -> bool:
-        return True
+    def _predictions_all_positive(self) -> bool:
+        return self.predictions.min() > 0
 
     @property
     def model_passes_tests(self) -> bool:
         return all([
-            self._model_has_ok_mae(), self._model_edge_cases_ok()
+            self._model_has_ok_mae(), self._predictions_all_positive()
         ])
 
     @property
@@ -82,7 +82,7 @@ class SingleModelTest:
                 f"The model has MAE of {self.model_mae}, which is not below the max threshold of {self.max_mae}"
             )
         edge_case_message = (
-            "The model passes all edge cases" if self._model_edge_cases_ok else "The model does not pass all edge cases"
+            "The model passes all edge cases" if self._predictions_all_positive() else "The model does not pass all edge cases"
         )
         return f"{mae_message}. {edge_case_message}."
 
