@@ -30,7 +30,7 @@ def main(config):
                 project=config["main"]["project_name"],
                 job_type="add_features",
                 group=config["main"]["experiment_name"]
-        ) as run:
+    ) as run:
 
         df = read_dataframe_artifact(run, **config["artifacts"]["clean_data"])
 

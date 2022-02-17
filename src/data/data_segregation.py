@@ -1,3 +1,8 @@
+"""
+Module to split modelling data into
+- One data set for training and validation
+- One hold out dataset for the final model performance evaluation
+"""
 import logging
 
 import hydra
