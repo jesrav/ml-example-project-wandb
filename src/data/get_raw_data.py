@@ -44,7 +44,7 @@ def main(config):
             med_inc_mean_drift_percentage=config["main"].get("med_inc_mean_drift_percentage", None)
         )
         
-        logger.info("Creating artifact")
+        logger.info("Log raw data")
         log_dataframe(run=run, df=df, **config["artifacts"]["raw_data"])
 
 

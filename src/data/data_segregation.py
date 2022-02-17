@@ -29,7 +29,7 @@ def main(config):
             test_size=config["evaluation"]["test_set_ratio"],
         )
 
-        logger.info('Log train/validate and test data artifacts.')
+        logger.info('Log train/validate and test data.')
         log_dataframe(run=run, df=train_validate_df, **config["artifacts"]["train_validate_data"])
         log_dataframe(run=run, df=test_df, **config["artifacts"]["test_data"])
 

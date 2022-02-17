@@ -37,7 +37,7 @@ def main(config):
         logger.info('Add features.')
         df = add_features(df)
 
-        logger.info('Log modelling input data artifact.')
+        logger.info('Log modelling input.')
         log_dataframe(run=run, df=df, **config["artifacts"]["model_input"])
 
 

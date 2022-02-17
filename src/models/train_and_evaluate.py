@@ -35,7 +35,7 @@ def train_evaluate(
 
     target_column = config["main"]["target_column"]
 
-    logger.info("Load data fro training model.")
+    logger.info("Load data from training model.")
     df = read_dataframe_artifact(run, **config["artifacts"]["train_validate_data"])
 
     logger.info("Initialize ml pipeline object.")
@@ -55,7 +55,7 @@ def train_evaluate(
         y_pred=predictions,
     )
 
-    logger.info("train on model on all artifacts")
+    logger.info("train on model on all data")
     pipeline.fit(df, df[target_column])
 
     logger.info("Logging performance metrics.")
@@ -69,7 +69,7 @@ def train_evaluate(
         pipeline_class.save_fitted_pipeline_plots(pipeline, out_dir=tmpdirname)
         log_dir(run=run, dir_path=tmpdirname, **config["artifacts"]["evaluation"])
 
-    logger.info("Logging model trained on all data as an artifact.")
+    logger.info("Logging model trained on all data.")
     with TemporaryDirectory() as tmpdirname:
         mlflow.pyfunc.save_model(
             python_model=MLFlowModelWrapper(pipeline),

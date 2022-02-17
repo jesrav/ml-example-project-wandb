@@ -1,5 +1,5 @@
 """
-Module to do preprocessing of artifacts.
+Module to do preprocessing.
 """
 import logging
 
