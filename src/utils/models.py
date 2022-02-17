@@ -1,4 +1,4 @@
-"""utils for using MLFlow in Azure ML."""
+"""utils for working with MLFlow and Azure ML."""
 from dataclasses import dataclass
 
 import wandb
@@ -37,6 +37,7 @@ class LoadedModel:
 
     @classmethod
     def from_wandb_artifact(cls, wandb_artifact: wandb.Artifact):
+        """Get a `Loaded model from a wandb artifact`"""
         model_path = wandb_artifact.download()
         model = mlflow.pyfunc.load_model(f'file:{model_path}/model')
 
@@ -50,6 +51,7 @@ class LoadedModel:
         )
 
     def promote_to_prod(self):
+        """Promote model to production."""
         self.wandb_artifact.aliases.append('prod')
         self.wandb_artifact.save()
 

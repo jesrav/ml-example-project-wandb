@@ -1,3 +1,4 @@
+"""Utilities for working with weights and biases artifacts"""
 import logging
 from tempfile import TemporaryDirectory
 from typing import Optional
