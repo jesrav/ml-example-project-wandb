@@ -1,6 +1,7 @@
 """utils for working with MLFlow and Azure ML."""
 from dataclasses import dataclass
 
+import numpy as np
 import wandb
 import mlflow
 
@@ -65,3 +66,7 @@ def get_model(project_name: str, model_name: str, model_version: str) -> LoadedM
 
     return LoadedModel.from_wandb_artifact(model_artifact)
 
+
+def set_seed(seed=33):
+    np.random.seed(seed)
+    return seed

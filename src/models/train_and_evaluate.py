@@ -17,7 +17,7 @@ from src.models.evaluation import RegressionEvaluation
 from src.models import model_pipeliene_configs
 from src.models.model_pipeliene_configs import BasePipelineConfig
 from src.utils.artifacts import read_dataframe_artifact, log_dir, log_file
-from src.utils.models import MLFlowModelWrapper
+from src.utils.models import MLFlowModelWrapper, set_seed
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,10 @@ def train_evaluate(
         group=config["main"]["experiment_name"],
         config=dict(config)
     )
+
+    logger.info("Fix seed.")
+    seed = set_seed()
+    run.log({"seed": seed})
 
     target_column = config["main"]["target_column"]
 
